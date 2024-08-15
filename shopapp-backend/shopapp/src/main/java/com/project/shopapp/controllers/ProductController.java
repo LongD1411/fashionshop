@@ -8,6 +8,7 @@ import com.project.shopapp.entities.ProductImage;
 import com.project.shopapp.respone.ProductListRespone;
 import com.project.shopapp.respone.ProductResponse;
 import com.project.shopapp.services.IProductService;
+import com.project.shopapp.utils.ImageUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.UrlResource;
@@ -96,7 +97,7 @@ public class ProductController {
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image");
                 }
                 // Lưu file và cập nhật  thumbnail trong dto
-                String fileName = storeFile(file);
+                String fileName = ImageUtil.storeFile(file);
                 ProductImage productImage = productService.createProductImage(existingProduct.getId(), ProductImageDTO.builder()
                         .imageUrl(fileName)
                         .build());
@@ -165,24 +166,6 @@ public class ProductController {
         }catch (Exception e){
             return  ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    private String storeFile(MultipartFile file) throws IOException {
-        //Lấy tên file
-        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
-        // Thêm UUID vào trước tên file để đảm bảo file là duy nhất
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-        // Đường dẫn đến thư mục bạn muốn lưu file
-        Path uploadDir = Paths.get("uploadDir");
-        // Kiểm tra và tạo thư mục nếu nó không tồn tại
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
-        // Đường dẫn đầy đủ đến tên file
-        Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-        // Sao chép file vào thư mục đích
-        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
-        return uniqueFileName;
     }
 
 }

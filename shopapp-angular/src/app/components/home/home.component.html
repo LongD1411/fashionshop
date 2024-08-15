@@ -73,17 +73,21 @@
       </nav>
       <div id="header-carousel" class="carousel slide" data-ride="carousel">
         <div class="carousel-inner">
-          <div *ngFor="let banner of banners; let i = index" [ngClass]="{'carousel-item': true, 'active': i === 0}"  style="height: 410px">
+          <div
+            *ngFor="let banner of banners; let i = index"
+            [ngClass]="{ 'carousel-item': true, active: i === 0 }"
+            style="height: 410px"
+          >
             <img class="img-fluid" [src]="banner.thumbnail" alt="Image" />
             <div
               class="carousel-caption d-flex flex-column align-items-center justify-content-center"
             >
               <div class="p-3" style="max-width: 700px">
                 <h4 class="text-light text-uppercase font-weight-medium mb-3">
-                 {{banner.description}}
+                  {{ banner.description }}
                 </h4>
                 <h3 class="display-4 text-white font-weight-semi-bold mb-4">
-                 {{banner.title}}
+                  {{ banner.title }}
                 </h3>
                 <a href="" class="btn btn-light py-2 px-3">Shop Now</a>
               </div>
@@ -148,78 +152,20 @@
 <!-- Categories Start -->
 <div class="container-fluid pt-5">
   <div class="row px-xl-5 pb-3">
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-1.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Men's dresses</h5>
+    <ng-container *ngFor="let category of categories">
+      <div *ngIf="category.thumbnail" class="col-lg-4 col-md-6 pb-1">
+        <div
+          class="cat-item d-flex flex-column border mb-4"
+          style="padding: 30px"
+        >
+          <!-- <p class="text-right">15 Products</p> -->
+          <a href="" class="cat-img position-relative overflow-hidden mb-3">
+            <img class="img-fluid" [src]="category.thumbnail" alt="" />
+          </a>
+          <h5 class="font-weight-semi-bold m-0">{{category.name}}</h5>
+        </div>
       </div>
-    </div>
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-2.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Women's dresses</h5>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-3.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Baby's dresses</h5>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-4.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Accerssories</h5>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-5.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Bags</h5>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-6 pb-1">
-      <div
-        class="cat-item d-flex flex-column border mb-4"
-        style="padding: 30px"
-      >
-        <p class="text-right">15 Products</p>
-        <a href="" class="cat-img position-relative overflow-hidden mb-3">
-          <img class="img-fluid" src="img/cat-6.jpg" alt="" />
-        </a>
-        <h5 class="font-weight-semi-bold m-0">Shoes</h5>
-      </div>
-    </div>
+    </ng-container>
   </div>
 </div>
 <!-- Categories End -->

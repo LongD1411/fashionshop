@@ -21,16 +21,21 @@ export class HomeComponent {
     this.categoryService.getCategories().subscribe({
       next: (response) => {
         this.categories = response;
+        this.categories.map((category) => {
+          if (category.thumbnail) {
+            category.thumbnail = `${enviroment.apiImage}/${category.thumbnail}`;
+          }
+          return category;
+        });
       },
     });
     this.categoryService.getBanners().subscribe({
       next: (response) => {
         this.banners = response;
-        this.banners.map(banner =>{
-          banner.thumbnail = `${enviroment.apiBaseUrl}/banner/images/${banner.thumbnail}`
+        this.banners.map((banner) => {
+          banner.thumbnail = `${enviroment.apiImage}/${banner.thumbnail}`;
           return banner;
-        })
-        console.log(this.banners);
+        });
       },
       error: (error) => {
         console.log(error);

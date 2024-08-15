@@ -35,8 +35,8 @@ public class WebSecurityConfig {
                 .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers(String.format("%s/users/register", apiPrefix),
-                                            String.format("%s/users/login", apiPrefix),
-                                            String.format("%s/banner/upload", apiPrefix)).permitAll()
+                                            String.format("%s/users/login", apiPrefix)).permitAll()
+                            .requestMatchers(GET,  String.format("%s/resources/**", apiPrefix)).permitAll()
                             .requestMatchers(GET, String.format("%s/products/images/*", apiPrefix)).permitAll()
                             .requestMatchers(GET, String.format("%s/banner/images/*", apiPrefix)).permitAll()
                             .requestMatchers(GET, String.format("%s/products/orders", apiPrefix)).permitAll()

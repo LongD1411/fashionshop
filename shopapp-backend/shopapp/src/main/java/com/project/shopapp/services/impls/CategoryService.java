@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.CategoryDTO;
 import com.project.shopapp.entities.Category;
 import com.project.shopapp.repositories.CategoryRepository;
 import com.project.shopapp.services.ICategoryService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,8 +16,9 @@ public class CategoryService implements ICategoryService {
 
 
     @Override
+    @Transactional
     public Category createCategory(CategoryDTO categoryDTO) {
-        Category category = Category.builder().name(categoryDTO.getName()).build();
+        Category category = Category.builder().name(categoryDTO.getName()).thumbnail(categoryDTO.getThumbnail()).build();
         return categoryRepository.save(category);
     }
 
