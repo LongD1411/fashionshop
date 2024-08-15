@@ -1,0 +1,80 @@
+<div class="container">
+  <form [formGroup]="loginForm" (submit)="submitHandler()">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <div class="login-form mx-auto">
+          <h2 class="login-header">Login</h2>
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="text"
+              class="form-control"
+              id="phone"
+              formControlName="phone"
+            />
+            <div class="divider-nospace"></div>
+            <div
+              *ngIf="phone.invalid && (phone.dirty || phone.touched)"
+              class="text-danger"
+            >
+              <div *ngIf="phone.hasError('required')">Phone is required.</div>
+              <div *ngIf="phone.hasError('minlength')">
+                Phone must be at least 6 characters long.
+              </div>
+            </div>
+          </div>
+          <div class="mt-5"></div>
+          <div class="form-group password-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              formControlName="password"
+            />
+            <i class="password-toggle fas fa-eye-slash"></i>
+            <div class="divider-nospace"></div>
+            <div
+              *ngIf="password.invalid && (password.dirty || password.touched)"
+              class="text-danger"
+            >
+              <div *ngIf="password.hasError('required')">
+                Password is required.
+              </div>
+              <div *ngIf="password.hasError('minlength')">
+                password must be at least 6 characters long.
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="registrationMessage"
+            [ngClass]="{ error: isError, success: !isError }"
+          >
+            {{ registrationMessage }}
+          </div>
+          <div class="form-group">
+            <div class="form-check checkbox-text">
+              <span style="display: flex">
+                <input type="checkbox" class="form-check-input" id="remember" />
+                <label class="form-check-label text-start" for="remember"
+                  >Remember?</label
+                >
+              </span>
+              <a href="#" class="register-link">Forgot password ?</a>
+            </div>
+          </div>
+          <button type="submit" class="login-button">Login</button>
+          <div class="divider"></div>
+          <p class="text-center">
+            You have'nt an account ?
+            <span
+              ><a href="/register" class="register-link"
+                >Create new account</a
+              ></span
+            >
+          </p>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

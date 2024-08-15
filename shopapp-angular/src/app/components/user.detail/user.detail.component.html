@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="intro-section">
+    <h1>UserDetailPage</h1>
+    <p>...</p>
+  </div>
+  <form [formGroup]="userDetailForm">
+    <div class="mb-3">
+      <label for="name" class="form-label">Họ và tên</label>
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        formControlName="full_name"
+        [class.is-invalid]="
+          userDetailForm.get('full_name')!.invalid &&
+          (userDetailForm.get('full_name')!.touched ||
+            userDetailForm.get('full_name')!.dirty)
+        "
+        [class.is-valid]="
+          userDetailForm.get('full_name')!.valid &&
+          (userDetailForm.get('full_name')!.touched ||
+            userDetailForm.get('full_name')!.dirty)
+        "
+      />
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        formControlName="address"
+        [class.is-invalid]="
+          userDetailForm.get('address')!.invalid &&
+          (userDetailForm.get('address')!.touched ||
+            userDetailForm.get('address')!.dirty)
+        "
+        [class.is-valid]="
+          userDetailForm.get('address')!.valid &&
+          (userDetailForm.get('address')!.touched ||
+            userDetailForm.get('address')!.dirty)
+        "
+      />
+      <input
+        type="text"
+        class="form-control"
+        id="name"
+        formControlName="phone_number"
+        [class.is-invalid]="
+          userDetailForm.get('phone_number')!.invalid &&
+          (userDetailForm.get('phone_number')!.touched ||
+            userDetailForm.get('phone_number')!.dirty)
+        "
+        [class.is-valid]="
+          userDetailForm.get('phone_number')!.valid &&
+          (userDetailForm.get('phone_number')!.touched ||
+            userDetailForm.get('phone_number')!.dirty)
+        "
+      />
+      <!-- <input
+        type="date"
+        class="form-control"
+        id="name"
+        formControlName="date_of_birth"
+        [class.is-invalid]="
+          userDetailForm.get('date_of_birth')!.invalid &&
+          (userDetailForm.get('date_of_birth')!.touched ||
+            userDetailForm.get('date_of_birth')!.dirty)
+        "
+        [class.is-valid]="
+          userDetailForm.get('date_of_birth')!.valid &&
+          (userDetailForm.get('date_of_birth')!.touched ||
+            userDetailForm.get('date_of_birth')!.dirty)
+        "
+      /> -->
+    </div>
+  </form>
+</div>

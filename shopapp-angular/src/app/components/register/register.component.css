@@ -1,0 +1,109 @@
+.container{
+    color: white;
+    height: 100vh;
+    }
+    .register-form{
+        background-color: rgb(12,12,55);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 500px;
+        border:1px solid rgb(32,34,60);
+        align-items: center;
+        justify-content: center;
+        margin-top: 50px;
+    }
+    .register-header{
+        text-align: center;
+        color:rgb(105,244,181);
+        margin-bottom: 20px;
+    }
+    .form-control{
+        background: transparent;
+        border: none;
+        color: white;
+    }
+    .form-select{
+        background: rgba(0,0,0,0.5);
+        border: none;
+        color: white;
+    }
+    .divider-nospace{
+        border-top:1px solid white;
+    }
+    .font-control:focus{
+        outline: none;
+        border-color: transparent;
+    }
+    .password-field{
+        position: relative;
+    }
+    .password-toggle{
+        position: absolute;
+        top:70%;
+        right: 15px;
+        transform: translateY(-50%);
+        color: rgb(105,244,181);
+        cursor: pointer;
+    }
+    .checkbox-text input[type="checkbox"]:checked{
+        border-color: white;
+        background-color: rgb(233,66,177);
+    }
+    .form-check-input{
+        margin-right:  5px;
+    }
+    .login-link{
+        color: rgb(105,244,181);
+        text-decoration: none;
+    }
+    .checkbox-text{
+        color:rgb(243,165,42);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+    .access-right{
+        margin-top: 20px;
+        width: 200px;
+        color: white;
+        border: 1px solid rgb(225,64,180);
+    
+    }
+    .error {
+        color: red;
+      }
+      
+      .success {
+        color: green;
+      }
+    .access-right:focus{
+        border: 1px solid rgb(225,64,180);
+    }
+    .form-control::placeholder{
+        color: rgba(243,165,42,0.4)
+    }
+    .login-button{
+        background: linear-gradient(to right, rgb(225,64,180), rgb(126,43,237));
+        color: white;
+        border-radius: 30px;
+        width: 100%;
+        margin-top: 20px;
+        padding: 10px 0;
+        border: none;
+    }
+    .divider{
+        height: 1px;
+        background: linear-gradient(to right, rgb(225,64,180), rgb(126,43,237));
+        margin: 20px;
+    }
+    .form-group label{
+        margin-bottom: 5px;
+    }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); /* Áp dụng bộ lọc để đảo ngược màu icon */
+      }
+      input[type="password"]::-webkit-calendar-picker-indicator {
+        filter: invert(1); /* Áp dụng bộ lọc để đảo ngược màu icon */
+      }
+      
