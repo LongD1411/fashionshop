@@ -4,6 +4,8 @@ import com.project.shopapp.dtos.ProductDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "products")
 @Getter
@@ -11,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Product extends  BaseEntity {
+public class Product extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,21 +23,31 @@ public class Product extends  BaseEntity {
 
     private float price;
 
+    @Column(name = "old_price")
+    private float oldPrice;
+
     @Column(name = "thumbnail", length = 300)
     private String thumbnail;
 
     @Column(name = "description")
     private String description;
-    public static Product toProduct(ProductDTO productDTO){
+
+    @JoinColumn(name = "category_id")
+    @ManyToOne
+    private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductSize> productSizes;
+
+    private String sku;// mã sản phẩm
+
+    public static Product toProduct(ProductDTO productDTO) {
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
                 .price(productDTO.getPrice())
-                .thumbnail(productDTO.getThumbnail())
                 .description(productDTO.getDescription())
+                .sku(productDTO.getSku())
                 .build();
         return newProduct;
     }
-    @JoinColumn(name ="category_id")
-    @ManyToOne
-    private Category category;
 }

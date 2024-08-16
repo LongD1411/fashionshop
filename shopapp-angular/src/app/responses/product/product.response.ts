@@ -4,6 +4,7 @@ export interface ProductResponse {
   id: number;
   name: string;
   price: number;
+  old_price: number;
   thumbnail: string;
   description: string;
   created_at: Date;

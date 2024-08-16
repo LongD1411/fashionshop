@@ -10,7 +10,7 @@ import java.util.List;
 
 
 public interface ProductRepository  extends JpaRepository<Product, Long> {
-    boolean existsByName(String name);
+    boolean existsByName(String  name);
     @Query("SELECT p FROM Product p WHERE " +
             "(:categoryId IS NULL OR :categoryId = 0 OR p.category.id = :categoryId) AND " +
             "(:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword% OR p.description LIKE %:keyword%)")
@@ -21,4 +21,7 @@ public interface ProductRepository  extends JpaRepository<Product, Long> {
 
     @Query("SELECT p FROM Product p WHERE p.id IN :ids")
     List<Product> findAllOrderProduct(@Param("ids") List<Long> ids);
+
+    @Query(value = "SELECT * FROM products ORDER BY created_at DESC LIMIT 8", nativeQuery = true)
+    List<Product> findTop6ProductOrderByUpdatedDate();
 }

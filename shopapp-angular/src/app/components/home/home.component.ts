@@ -16,7 +16,11 @@ import { BannerResponse } from '../../responses/banner.respose';
 export class HomeComponent {
   categories: CategoryResponse[] = [];
   banners: BannerResponse[] = [];
-  constructor(private categoryService: CategoryService) {}
+  top6ProductUpdated: ProductResponse[] = [];
+  constructor(
+    private categoryService: CategoryService,
+    private productService: ProductService
+  ) {}
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe({
       next: (response) => {
@@ -40,6 +44,18 @@ export class HomeComponent {
       error: (error) => {
         console.log(error);
       },
+    });
+    this.productService.getTop6ProductUpdated().subscribe({
+      next: (response) => {
+        this.top6ProductUpdated = response;
+        this.top6ProductUpdated.map((product) => {
+          product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
+        });
+      },
+      error: (error) => {
+        console.log(error);
+      },
+      complete: () => {},
     });
   }
   // products: ProductResponse[] = [];

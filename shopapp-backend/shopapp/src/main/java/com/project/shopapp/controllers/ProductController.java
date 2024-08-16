@@ -21,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,41 +37,20 @@ import static com.project.shopapp.statics.Image.MAXIMUM_IMAGES;
 
 @RestController
 @RequestMapping(value = "${api.prefix}/products")
-//@Validated
+//@Validate
 @RequiredArgsConstructor
 public class ProductController {
     private final LocalizationUtils localizationUtils;
     private final IProductService productService;
 
-    @PostMapping(value = "")
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductDTO productDTO,
-                                           BindingResult result) {
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createProduct(@RequestPart("product") ProductDTO productDTO,
+                                           @RequestPart("thumbnail") MultipartFile file) {
         try {
-            if (result.hasErrors()) {
-                List<String> errorMessages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-                return ResponseEntity.badRequest().body(errorMessages);
-            }
-            Product newProduct = productService.createProduct(productDTO);
+            Product newProduct = productService.createProduct(productDTO, file);
             return ResponseEntity.ok("post request success: " + newProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-    @GetMapping("images/{imageName}")
-    public ResponseEntity<?> viewImage(@PathVariable String imageName){
-        try{
-            java.nio.file.Path imgaePath = Paths.get("uploadDir/" +imageName);
-            UrlResource urlResource = new UrlResource(imgaePath.toUri());
-
-            if(urlResource.exists()){
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(urlResource);
-            }else{
-                return ResponseEntity.notFound().build();
-            }
-        }catch (Exception e){
-            return ResponseEntity.notFound().build();
         }
     }
     @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -123,6 +103,12 @@ public class ProductController {
                 .build();
         return ResponseEntity.ok().body(products);
     }
+    @GetMapping("/home")// http://localhost:8088/api/v1/products/home
+    public ResponseEntity<?> getTopProductsArrived() {
+        List<ProductResponse> topProductArrived = productService.getTopProductArrived();
+        return ResponseEntity.ok().body(topProductArrived);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getProduct(@PathVariable Long id) {
         try {

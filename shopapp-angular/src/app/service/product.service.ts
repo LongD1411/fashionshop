@@ -10,6 +10,7 @@ import { ProductImageResponse } from '../responses/product/productImage.response
 })
 export class ProductService {
   private apiGetProducts = `${enviroment.apiBaseUrl}/products`;
+  private apiGetTop6ProductUpdated = `${enviroment.apiBaseUrl}/products/home`;
   constructor(private http: HttpClient) {}
   getProducts(
     page: number,
@@ -35,5 +36,8 @@ export class ProductService {
         params,
       }
     );
+  }
+  getTop6ProductUpdated():Observable<ProductResponse[]>{
+    return this.http.get<ProductResponse[]>(this.apiGetTop6ProductUpdated)
   }
 }

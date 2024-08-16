@@ -20,10 +20,13 @@ public class ProductResponse extends BaseResponse {
     private Long categoryId;
     private String name;
     private float price;
+    @JsonProperty("old_price")
+    private float oldPrice;
     private String thumbnail;
     private String description;
     @JsonProperty("product_images")
     private List<ProductImageResponse> productImages;
+
     public static ProductResponse toProductRespone(Product product ,List<ProductImageResponse> productImagesResponse){
         ProductResponse productResponse = ProductResponse.builder()
                 .name(product.getName())
@@ -51,4 +54,5 @@ public class ProductResponse extends BaseResponse {
         productResponse.setUpdatedAt(product.getUpdatedAt());
         return productResponse;
     }
+
 }

@@ -2,44 +2,87 @@ package com.project.shopapp.services.impls;
 
 import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
-import com.project.shopapp.entities.Category;
-import com.project.shopapp.entities.Product;
-import com.project.shopapp.entities.ProductImage;
+import com.project.shopapp.dtos.ProductSizeDTO;
+import com.project.shopapp.entities.*;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidParamException;
 import com.project.shopapp.repositories.CategoryRepository;
 import com.project.shopapp.repositories.ProductImageRepository;
 import com.project.shopapp.repositories.ProductRepository;
+import com.project.shopapp.repositories.SizeRepository;
 import com.project.shopapp.respone.ProductImageResponse;
 import com.project.shopapp.respone.ProductResponse;
 import com.project.shopapp.services.IProductService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.shopapp.utils.ImageUtil;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.project.shopapp.statics.Image.MAXIMUM_IMAGES;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService implements IProductService {
-    @Autowired
-    private ProductRepository productRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ProductImageRepository productImageRepository;
+    private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final ProductImageRepository productImageRepository;
+    private final SizeRepository sizeRepository;
 
+//    @Override
+//    public Product createProduct(ProductDTO productDTO) throws Exception {
+//        Category existsCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
+//                () -> new DataNotFoundException("Cannot find categoryID with id:" + productDTO.getCategoryId()));
+//        Product newProduct = Product.toProduct(productDTO);
+//        newProduct.setCategory(existsCategory);
+//        return productRepository.save(newProduct);
+//    }
     @Override
-    public Product createProduct(ProductDTO productDTO) throws Exception {
+    @Transactional
+    public Product createProduct(ProductDTO productDTO, MultipartFile file) throws Exception {
         Category existsCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
                 () -> new DataNotFoundException("Cannot find categoryID with id:" + productDTO.getCategoryId()));
-        Product newProduct = Product.toProduct(productDTO);
-        newProduct.setCategory(existsCategory);
-        return productRepository.save(newProduct);
+
+        Product product = Product.builder()
+                .name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .oldPrice(productDTO.getOldPrice())
+                .description(productDTO.getDescription())
+                .category(existsCategory)
+                .sku(productDTO.getSku())
+                .build();
+
+        Set<ProductSize> productSizes = new HashSet<>();
+        for (ProductSizeDTO sizeDTO : productDTO.getProductSizes()) {
+            Size size = sizeRepository.findById(sizeDTO.getSizeId())
+                    .orElseThrow(() -> new DataNotFoundException("Size not found"));
+            ProductSize productSize = ProductSize.builder()
+                    .product(product)
+                    .size(size)
+                    .quantity(sizeDTO.getQuantity())
+                    .build();
+            productSizes.add(productSize);
+        }
+        if (!file.isEmpty()) {
+            // Kiểm tra kích thước file và định dạng
+            ResponseEntity<?> fileCheckResult = ImageUtil.checkImage(file);
+            if (fileCheckResult != null) {
+               throw  new Exception("Ảnh quá lớn hoặc file không đúng định dạnh");
+            }
+            // Lưu file và cập nhật thumbnail trong dto
+            String fileName = ImageUtil.storeFile(file);
+            product.setThumbnail(fileName);
+        }
+        product.setProductSizes(productSizes);
+        return productRepository.save(product);
     }
+
 
     @Override
     public ProductResponse getProduct(Long id) throws Exception {
@@ -101,8 +144,28 @@ public class ProductService implements IProductService {
                .id(product.getId())
                .name(product.getName())
                .price(product.getPrice())
+               .oldPrice(product.getOldPrice())
                .thumbnail(product.getThumbnail())
                .build()).toList();
         return  productResponses ;
+    }
+
+    @Override
+    public List<ProductResponse> getTopProductArrived() {
+       List<Product> products = productRepository.findTop6ProductOrderByUpdatedDate();
+       List<ProductResponse> productResponses = new ArrayList<>();
+       for(Product product : products){
+           ProductResponse productResponse = ProductResponse.builder()
+                   .thumbnail(product.getThumbnail())
+                   .categoryId(product.getCategory().getId())
+                   .description(product.getDescription())
+                   .oldPrice(product.getOldPrice())
+                   .price(product.getPrice())
+                   .id(product.getId())
+                   .name(product.getName())
+                   .build();
+           productResponses.add(productResponse);
+       }
+        return productResponses;
     }
 }
