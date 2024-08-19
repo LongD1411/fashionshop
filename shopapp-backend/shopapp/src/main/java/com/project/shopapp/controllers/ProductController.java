@@ -91,9 +91,10 @@ public class ProductController {
 
     @GetMapping("")// http://localhost:8088/api/v1/categories?page=1&limit=1
         public ResponseEntity<ProductListRespone> getProducts(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
-                                                          @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
-                                                          @RequestParam(value="keyword", required = false, defaultValue = "") String keyword,
-                                                          @RequestParam(value="categoryId", required = false, defaultValue = "0") Long categoryId) {
+                                                              @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                                                              @RequestParam(value="keyword", required = false, defaultValue = "") String keyword,
+                                                              @RequestParam(value="categoryId", required = false, defaultValue = "0") Long categoryId,
+                                                                 @RequestParam(value="size", required = false, defaultValue = "") String sizeId) {
         PageRequest pageRequest = PageRequest.of(page -1, limit, Sort.by("createdAt").descending());
         Page<ProductResponse> productPage = productService.getAllProducts(keyword,categoryId,pageRequest);
         ProductListRespone products = ProductListRespone.builder()
@@ -103,9 +104,15 @@ public class ProductController {
                 .build();
         return ResponseEntity.ok().body(products);
     }
-    @GetMapping("/home")// http://localhost:8088/api/v1/products/home
-    public ResponseEntity<?> getTopProductsArrived() {
-        List<ProductResponse> topProductArrived = productService.getTopProductArrived();
+    @GetMapping("/top8")// http://localhost:8088/api/v1/products/top8
+    public ResponseEntity<?> getTop8ProductsArrived() {
+        List<ProductResponse> topProductArrived = productService.getTop8ProductArrived();
+        return ResponseEntity.ok().body(topProductArrived);
+    }
+
+    @GetMapping("/top4")// http://localhost:8088/api/v1/products/top4
+    public ResponseEntity<?> getTop4ProductsArrived() {
+        List<ProductResponse> topProductArrived = productService.getTop4ProductArrived();
         return ResponseEntity.ok().body(topProductArrived);
     }
 

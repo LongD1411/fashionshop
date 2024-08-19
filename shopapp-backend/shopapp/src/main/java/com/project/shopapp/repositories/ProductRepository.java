@@ -23,5 +23,8 @@ public interface ProductRepository  extends JpaRepository<Product, Long> {
     List<Product> findAllOrderProduct(@Param("ids") List<Long> ids);
 
     @Query(value = "SELECT * FROM products ORDER BY created_at DESC LIMIT 8", nativeQuery = true)
-    List<Product> findTop6ProductOrderByUpdatedDate();
+    List<Product> findTop8ProductOrderByUpdatedDate();
+
+    @Query(value = "SELECT * FROM products ORDER BY created_at DESC LIMIT 4", nativeQuery = true)
+    List<Product> findTop4ProductOrderByUpdatedDate();
 }

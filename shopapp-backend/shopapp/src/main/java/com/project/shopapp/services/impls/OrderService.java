@@ -1,16 +1,9 @@
 package com.project.shopapp.services.impls;
 
-import com.project.shopapp.dtos.CartItemDTO;
-import com.project.shopapp.dtos.OrderDTO;
-import com.project.shopapp.entities.Order;
-import com.project.shopapp.entities.OrderDetail;
-import com.project.shopapp.entities.Product;
-import com.project.shopapp.entities.User;
+import com.project.shopapp.dtos.*;
+import com.project.shopapp.entities.*;
 import com.project.shopapp.exceptions.DataNotFoundException;
-import com.project.shopapp.repositories.OrderDetailRepository;
-import com.project.shopapp.repositories.OrderRepository;
-import com.project.shopapp.repositories.ProductRepository;
-import com.project.shopapp.repositories.UserRepository;
+import com.project.shopapp.repositories.*;
 import com.project.shopapp.respone.OrderDetailResponse;
 import com.project.shopapp.respone.OrderResponese;
 import com.project.shopapp.services.IOrderService;
@@ -39,6 +32,7 @@ public class OrderService implements IOrderService {
     private  final OrderDetailRepository orderDetailRepository;
     private final ModelMapper modelMapper;
     private final OrderDetailService orderDetailService;
+    private  final SizeRepository sizeRepository;
 
     @Override
     @Transactional(rollbackFor = DataNotFoundException.class)
@@ -65,7 +59,9 @@ public class OrderService implements IOrderService {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
             Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId() ));
+            Size size = sizeRepository.findById(cartItemDTO.getSizeId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId() ));
             orderDetail.setProduct(product);
+            orderDetail.setSize(size);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setNumberOfProducts(cartItemDTO.getQuantity());
             orderDetail.setTotalMoney(product.getPrice()*cartItemDTO.getQuantity());

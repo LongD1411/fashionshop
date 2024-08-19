@@ -24,6 +24,10 @@ public class OrderDetail {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private  Product product;
+    
+    @ManyToOne
+    @JoinColumn(name = "size_id")
+    private  Size size;
 
     @Column(name = "price", nullable = false)
     private Float price;
@@ -34,6 +38,4 @@ public class OrderDetail {
     @Column(name = "total_money", nullable = false)
     private Float totalMoney;
 
-    @Column(name = "color")
-    private String  color;
 }

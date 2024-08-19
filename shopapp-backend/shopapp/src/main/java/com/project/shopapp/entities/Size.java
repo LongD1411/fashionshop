@@ -15,6 +15,7 @@ public class Size {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "size_code")
+
     private String sizeCode;
     @Column(name = "size_name")
     private String sizeName;

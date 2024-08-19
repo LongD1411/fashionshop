@@ -25,7 +25,8 @@ public class OrderDTO  {
     @JsonProperty("user_id")
     private Long userId;
 
-    @JsonProperty("fullname")
+    @JsonProperty("full_name")
+    @NotBlank(message = "Full Name is required")
     private String fullName;
 
     private String email;
@@ -47,8 +48,8 @@ public class OrderDTO  {
     @NotBlank(message = "Shipping method is required")
     private String shippingMethod;
 
-    @JsonProperty("shipping_date")
-    private LocalDate shippingDate;
+//    @JsonProperty("shipping_date")
+//    private LocalDate shippingDate;
 
     @JsonProperty("payment_method")
     @NotBlank(message = "Payment method is required")

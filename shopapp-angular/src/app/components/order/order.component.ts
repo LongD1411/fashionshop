@@ -12,6 +12,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { OrderService } from '../../service/order.service';
+import { Size } from '../../responses/size.response';
+import { errorContext } from 'rxjs/internal/util/errorContext';
+import { OrderDetailResponse } from '../../responses/order/order.detail.response';
+import { Subscription, forkJoin } from 'rxjs';
+import { CartItemStorage } from '../../responses/cart.item';
 
 @Component({
   selector: 'app-order',
@@ -19,7 +24,81 @@ import { OrderService } from '../../service/order.service';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './order.component.html',
 })
-export class OrderComponent {
+export class OrderComponent implements OnInit {
+  productIds: number[] = [];
+  size: Size[] = [];
+  localProduct: {
+    product: ProductResponse | undefined;
+    size_name: string | undefined;
+    quantity: number;
+  }[] = [];
+  cart: CartItemStorage[] = [];
+  cartSubcription: Subscription | undefined;
+  constructor(
+    private cartService: CartService,
+    private productService: ProductService
+  ) {}
+  ngOnInit(): void {
+    this.cartSubcription = this.cartService.getCart().subscribe((items) => {
+      this.cart = items;
+      this.productIds = this.cart.map((item) => item.product_id);
+      // Lấy thông tin kích thước và sản phẩm đồng thời
+      if (this.cart.length === 0) {
+        this.localProduct = [];
+      } else {
+        forkJoin([
+          this.productService.getAllSize(),
+          this.productService.getProductOrders(this.productIds),
+        ]).subscribe({
+          next: ([sizesResponse, productsResponse]) => {
+            this.size = sizesResponse;
+            this.localProduct = this.cart.map((cartLocal) => {
+              const product = productsResponse.find(
+                (productAPI) => productAPI.id === cartLocal.product_id
+              );
+              if (product) {
+                product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
+              }
+              const size = this.size.find(
+                (sizeAPI) => sizeAPI.id === cartLocal.size_id
+              );
+              const quantity = cartLocal.quantity;
+              return {
+                product: product,
+                size_name: size?.sizeName,
+                quantity: quantity,
+              };
+            });
+            console.log(this.localProduct);
+          },
+          error: (error) => {
+            console.log(error);
+          },
+        });
+      }
+    });
+  }
+  quantityUp(id: number): void {
+    this.cartService.quantityUp(id);
+  }
+  removeItem(id: number) {
+    this.cartService.removeItem(id);
+  }
+  quantityDown(id: number): void {
+    this.cartService.quantityDown(id);
+  }
+  ngOnDestroy(): void {
+    if (this.cartSubcription) {
+      this.cartSubcription.unsubscribe();
+    }
+  }
+  getTotal(): number {
+    return this.localProduct.reduce(
+      (sum, item) => sum + item.product!.price * item.quantity,
+      0
+    );
+  }
+
   // cartItems: { product: ProductResponse; quantity: number; total: number }[] =
   //   [];
   // orderProducts: ProductResponse[] = [];
@@ -100,7 +179,7 @@ export class OrderComponent {
   //       ...this.orderData,
   //       ...this.orderForm.value,
   //     };
-  //     this.orderData.total_money = this.total_money;  
+  //     this.orderData.total_money = this.total_money;
   //     this.cartItems.map((cartItem) => ({
   //       product_id: cartItem.product.id,
   //       quantity: cartItem.quantity,

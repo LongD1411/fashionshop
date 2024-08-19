@@ -6,10 +6,7 @@ import com.project.shopapp.dtos.ProductSizeDTO;
 import com.project.shopapp.entities.*;
 import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.exceptions.InvalidParamException;
-import com.project.shopapp.repositories.CategoryRepository;
-import com.project.shopapp.repositories.ProductImageRepository;
-import com.project.shopapp.repositories.ProductRepository;
-import com.project.shopapp.repositories.SizeRepository;
+import com.project.shopapp.repositories.*;
 import com.project.shopapp.respone.ProductImageResponse;
 import com.project.shopapp.respone.ProductResponse;
 import com.project.shopapp.services.IProductService;
@@ -34,7 +31,7 @@ public class ProductService implements IProductService {
     private final CategoryRepository categoryRepository;
     private final ProductImageRepository productImageRepository;
     private final SizeRepository sizeRepository;
-
+    private final ProductSizeRepository productSizeRepository;
 //    @Override
 //    public Product createProduct(ProductDTO productDTO) throws Exception {
 //        Category existsCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
@@ -86,10 +83,15 @@ public class ProductService implements IProductService {
 
     @Override
     public ProductResponse getProduct(Long id) throws Exception {
-        Product product = productRepository.findById(id).orElseThrow(() ->
+            Product product = productRepository.findById(id).orElseThrow(() ->
                 new DataNotFoundException("Cannot find product with id: " + id));
-        List<ProductImage> productImages = productImageRepository.findByProductId(id);
-        return ProductResponse.toProductRespone(product, ProductImageResponse.toProductImageResponse(productImages));
+        List<ProductSize>  productSizes= productSizeRepository.findByProductId(product.getId());
+        List<Size> sizes = new ArrayList<>();
+        for(ProductSize productSize: productSizes){
+            sizes.add(productSize.getSize());
+        }
+        List<ProductImage> productImages = productImageRepository.findByProductId(product.getId());
+        return ProductResponse.toProductRespone(product, ProductImageResponse.toProductImageResponse(productImages), sizes);
     }
 
     @Override
@@ -151,8 +153,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductResponse> getTopProductArrived() {
-       List<Product> products = productRepository.findTop6ProductOrderByUpdatedDate();
+    public List<ProductResponse> getTop8ProductArrived() {
+       List<Product> products = productRepository.findTop8ProductOrderByUpdatedDate();
        List<ProductResponse> productResponses = new ArrayList<>();
        for(Product product : products){
            ProductResponse productResponse = ProductResponse.builder()
@@ -166,6 +168,24 @@ public class ProductService implements IProductService {
                    .build();
            productResponses.add(productResponse);
        }
+        return productResponses;
+    }
+    @Override
+    public List<ProductResponse> getTop4ProductArrived() {
+        List<Product> products = productRepository.findTop4ProductOrderByUpdatedDate();
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for(Product product : products){
+            ProductResponse productResponse = ProductResponse.builder()
+                    .thumbnail(product.getThumbnail())
+                    .categoryId(product.getCategory().getId())
+                    .description(product.getDescription())
+                    .oldPrice(product.getOldPrice())
+                    .price(product.getPrice())
+                    .id(product.getId())
+                    .name(product.getName())
+                    .build();
+            productResponses.add(productResponse);
+        }
         return productResponses;
     }
 }

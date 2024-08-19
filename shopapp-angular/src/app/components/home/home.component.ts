@@ -7,19 +7,23 @@ import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../service/category.service';
 import { CategoryResponse } from '../../responses/category/category.respones';
 import { BannerResponse } from '../../responses/banner.respose';
+import { Router, RouterLink } from '@angular/router';
+import { CartService } from '../../service/cart.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
   categories: CategoryResponse[] = [];
   banners: BannerResponse[] = [];
-  top6ProductUpdated: ProductResponse[] = [];
+  top8ProductUpdated: ProductResponse[] = [];
   constructor(
     private categoryService: CategoryService,
-    private productService: ProductService
+    private productService: ProductService,
+    private router: Router,
+    private cartService: CartService
   ) {}
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe({
@@ -45,10 +49,10 @@ export class HomeComponent {
         console.log(error);
       },
     });
-    this.productService.getTop6ProductUpdated().subscribe({
+    this.productService.getTop8ProductUpdated().subscribe({
       next: (response) => {
-        this.top6ProductUpdated = response;
-        this.top6ProductUpdated.map((product) => {
+        this.top8ProductUpdated = response;
+        this.top8ProductUpdated.map((product) => {
           product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
         });
       },
@@ -57,6 +61,9 @@ export class HomeComponent {
       },
       complete: () => {},
     });
+  }
+  viewProductDetails(productId: number) {
+    this.router.navigate(['/chi-tiet-san-pham', productId]);
   }
   // products: ProductResponse[] = [];
   // currentPage: number = 1;
@@ -129,10 +136,10 @@ export class HomeComponent {
   // onPageChange(page: number) {
   //   this.currentPage = page;
   //   this.getProducts(
-  //     this.currentPage,
-  //     this.limit,
-  //     this.keyword,
-  //     this.categoryId
+  // this.currentPage,
+  // this.limit,
+  // this.keyword,
+  // this.categoryId
   //   );
   // }
   // generateVisiblePageArray(currentPage: number, totalPages: number): number[] {

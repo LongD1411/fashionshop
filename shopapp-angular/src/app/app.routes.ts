@@ -35,11 +35,12 @@ export const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: 'product',
+    path: 'chi-tiet-san-pham/:id',
     component: DetailProductComponent,
   },
   {
     path: 'users/detail',
     component: UserDetailComponent,
   },
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

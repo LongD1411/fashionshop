@@ -1,3 +1,4 @@
+import { Size } from '../size.response';
 import { ProductImageResponse } from './productImage.response';
 
 export interface ProductResponse {
@@ -11,4 +12,5 @@ export interface ProductResponse {
   updated_at: Date;
   category_id: number;
   product_images: ProductImageResponse[];
+  sizes :Size[];
 }

@@ -25,11 +25,7 @@
                 "output": "/assets/"
               }
             ],
-            "styles": [
-              "src/assets/css/style.min.css",
-              "src/assets/css/style.css",
-              "src/styles.css"
-            ],
+            "styles": [],
             "scripts": []
           },
           "configurations": {
@@ -82,11 +78,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.css",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
-            ],
+            "styles": ["src/styles.css"],
             "scripts": []
           }
         }

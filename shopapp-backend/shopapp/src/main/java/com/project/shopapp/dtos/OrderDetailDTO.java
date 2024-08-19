@@ -21,6 +21,10 @@ public class OrderDetailDTO {
     @JsonProperty("product_id")
     private Long productId;
 
+    @Min(value = 0, message = "size id must be > 0")
+    @JsonProperty("size_id")
+    private Size sizeId;
+
     @Min(value = 0, message = "price must be > 0")
     private float price;
 

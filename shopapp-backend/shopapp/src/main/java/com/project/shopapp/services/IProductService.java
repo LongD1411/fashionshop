@@ -22,5 +22,6 @@ public interface IProductService {
     boolean existsByName(String name);
     ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
     List<ProductResponse> findAllProductsOrder(List<Long> ids);
-    List<ProductResponse> getTopProductArrived();
+    List<ProductResponse> getTop8ProductArrived();
+    List<ProductResponse> getTop4ProductArrived();
 }

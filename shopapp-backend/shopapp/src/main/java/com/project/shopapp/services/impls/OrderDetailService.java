@@ -38,7 +38,6 @@ public class OrderDetailService implements IOrderDetailService {
                 () -> new DataNotFoundException("Can't find product with id: " + orderDetailDTO.getProductId()));
 
         OrderDetail orderDetail = OrderDetail.builder()
-                .color(orderDetailDTO.getColor())
                 .price(orderDetailDTO.getPrice())
                 .numberOfProducts(orderDetailDTO.getNumberOfProducts())
                 .totalMoney(orderDetailDTO.getTotalMoney())
@@ -63,7 +62,6 @@ public class OrderDetailService implements IOrderDetailService {
                 () -> new DataNotFoundException("Can't find product with id: " + orderDetailDTO.getProductId()));
         existingOrderDetail.setProduct(product);
         existingOrderDetail.setOrder(order);
-        existingOrderDetail.setColor(orderDetailDTO.getColor());
         existingOrderDetail.setPrice(orderDetailDTO.getPrice());
         existingOrderDetail.setTotalMoney(orderDetailDTO.getTotalMoney());
         existingOrderDetail.setNumberOfProducts(orderDetailDTO.getNumberOfProducts());
@@ -78,8 +76,7 @@ public class OrderDetailService implements IOrderDetailService {
         List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderId(orderId);
         List<OrderDetailResponse> orderDetailResponseList = new ArrayList<>();
         for (OrderDetail orderDetail : orderDetailList) {
-            OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
-            modelMapper.typeMap(OrderDetail.class, OrderDetailResponse.class).map(orderDetail, orderDetailResponse);
+            OrderDetailResponse orderDetailResponse = OrderDetailResponse.toOderDetailResponse(orderDetail);
             orderDetailResponseList.add(orderDetailResponse);
         }
         return orderDetailResponseList;

@@ -2,6 +2,7 @@ package com.project.shopapp.respone;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.shopapp.entities.Order;
+import com.project.shopapp.entities.OrderDetail;
 import com.project.shopapp.entities.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,21 +17,34 @@ public class OrderDetailResponse {
 //    @JsonProperty("order_id")
 //    private Long  orderId;
 
-    @JsonProperty("product")
-    private Product product;
+    @JsonProperty("product_name")
+    private String productName;
 
     @JsonProperty("price")
     private Float price;
 
-    @JsonProperty("number_of_products")
-    private Integer numberOfProducts;
+    @JsonProperty("quantity")
+    private Integer quantity;
 
     @JsonProperty("thumbnail_url")
     private  String thumbnailURL;
 
+    @JsonProperty("size_name")
+    private String sizeName;
+
     @JsonProperty("total_money")
     private Float totalMoney;
 
-    @JsonProperty("color")
-    private String  color;
+    public static OrderDetailResponse toOderDetailResponse(OrderDetail orderDetail){
+        OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
+        orderDetailResponse.setId(orderDetail.getId());
+        orderDetailResponse.setSizeName(orderDetail.getSize().getSizeName());
+        orderDetailResponse.setProductName(orderDetail.getProduct().getName());
+        orderDetailResponse.setQuantity(orderDetail.getNumberOfProducts());
+        orderDetailResponse.setThumbnailURL(orderDetail.getProduct().getThumbnail());
+        orderDetailResponse.setTotalMoney(orderDetail.getTotalMoney());
+        orderDetailResponse.setPrice(orderDetail.getPrice());
+        return  orderDetailResponse;
+    }
 }
+

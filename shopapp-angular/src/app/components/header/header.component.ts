@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CategoryResponse } from '../../responses/category/category.respones';
-import { CategoryService } from '../../service/category.service';
 import { CommonModule } from '@angular/common';
+import { CartService } from '../../service/cart.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -10,4 +10,23 @@ import { CommonModule } from '@angular/common';
   imports: [RouterLink, CommonModule],
   templateUrl: './header.component.html',
 })
-export class HeaderComponent {}
+export class HeaderComponent implements OnInit, OnDestroy {
+  itemCartQuantity: number = 0;
+  private cartSubscription!: Subscription;
+
+  constructor(private cartService: CartService) {}
+
+  ngOnInit() {
+    this.cartSubscription = this.cartService
+      .getQuantity()
+      .subscribe((quantity) => {
+        this.itemCartQuantity = quantity;
+      });
+  }
+
+  ngOnDestroy() {
+    if (this.cartSubscription) {
+      this.cartSubscription.unsubscribe();
+    }
+  }
+}
