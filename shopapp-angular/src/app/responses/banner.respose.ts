@@ -1,5 +1,6 @@
-export interface BannerResponse{
-    title: string;
-    description: string;
-    thumbnail:string;
+export interface BannerResponse {
+  id: number;
+  title: string;
+  description: string;
+  thumbnail: string;
 }

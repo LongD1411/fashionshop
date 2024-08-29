@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { ProductService } from '../../service/product.service';
 import { ProductResponse } from '../../responses/product/product.response';
 import { enviroment } from '../../enviroments/enviroment';
@@ -17,11 +17,12 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
 import { OrderDetailResponse } from '../../responses/order/order.detail.response';
 import { Subscription, forkJoin } from 'rxjs';
 import { CartItemStorage } from '../../responses/cart.item';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,RouterLink],
   templateUrl: './order.component.html',
 })
 export class OrderComponent implements OnInit {
@@ -29,13 +30,14 @@ export class OrderComponent implements OnInit {
   size: Size[] = [];
   localProduct: {
     product: ProductResponse | undefined;
-    size_name: string | undefined;
+    size: Size | undefined;
     quantity: number;
   }[] = [];
   cart: CartItemStorage[] = [];
   cartSubcription: Subscription | undefined;
   constructor(
     private cartService: CartService,
+    private route: Router,
     private productService: ProductService
   ) {}
   ngOnInit(): void {
@@ -65,11 +67,11 @@ export class OrderComponent implements OnInit {
               const quantity = cartLocal.quantity;
               return {
                 product: product,
-                size_name: size?.sizeName,
+                size:size,
                 quantity: quantity,
               };
             });
-            console.log(this.localProduct);
+            
           },
           error: (error) => {
             console.log(error);
@@ -98,7 +100,9 @@ export class OrderComponent implements OnInit {
       0
     );
   }
-
+  toConfirm() {
+    this.route.navigate(['/xac-nhan']);
+  }
   // cartItems: { product: ProductResponse; quantity: number; total: number }[] =
   //   [];
   // orderProducts: ProductResponse[] = [];

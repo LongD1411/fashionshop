@@ -28,11 +28,11 @@ import java.util.Optional;
 public class OrderService implements IOrderService {
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
-    private final ProductRepository productRepository ;
-    private  final OrderDetailRepository orderDetailRepository;
+    private final ProductRepository productRepository;
+    private final OrderDetailRepository orderDetailRepository;
     private final ModelMapper modelMapper;
     private final OrderDetailService orderDetailService;
-    private  final SizeRepository sizeRepository;
+    private final SizeRepository sizeRepository;
 
     @Override
     @Transactional(rollbackFor = DataNotFoundException.class)
@@ -40,8 +40,9 @@ public class OrderService implements IOrderService {
         User user = userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new DataNotFoundException("Cannot find user with id :" + orderDTO.getUserId()));
         modelMapper.typeMap(OrderDTO.class, Order.class)
-                .addMappings(mapper -> {mapper.skip(Order::setId);
-                             });
+                .addMappings(mapper -> {
+                    mapper.skip(Order::setId);
+                });
         Order order = new Order();
         modelMapper.map(orderDTO, order);
         order.setUser(user);
@@ -55,50 +56,58 @@ public class OrderService implements IOrderService {
         order.setActive(true);
         orderRepository.save(order);
         List<OrderDetail> orderDetails = new ArrayList<>();
-        for(CartItemDTO cartItemDTO: orderDTO.getCartItemDTOS()){
+        for (CartItemDTO cartItemDTO : orderDTO.getCartItemDTOS()) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
-            Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId() ));
-            Size size = sizeRepository.findById(cartItemDTO.getSizeId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId() ));
+            Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId()));
+            Size size = sizeRepository.findById(cartItemDTO.getSizeId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId()));
             orderDetail.setProduct(product);
             orderDetail.setSize(size);
             orderDetail.setPrice(product.getPrice());
             orderDetail.setNumberOfProducts(cartItemDTO.getQuantity());
-            orderDetail.setTotalMoney(product.getPrice()*cartItemDTO.getQuantity());
+            orderDetail.setQuantity(cartItemDTO.getQuantity());
+            orderDetail.setTotalMoney(product.getPrice() * cartItemDTO.getQuantity());
             orderDetails.add(orderDetail);
         }
-        orderDetailRepository.saveAll(orderDetails);
+        List<OrderDetail> orderDetailList = orderDetailRepository.saveAll(orderDetails);
+        OrderResponese orderResponese = modelMapper.map(order, OrderResponese.class);
+        List<OrderDetailResponse> orderDetailResponseList = new ArrayList<>();
+        for(OrderDetail orderDetail: orderDetailList){
+            OrderDetailResponse orderDetailResponse = OrderDetailResponse.toOderDetailResponse(orderDetail);
+            orderDetailResponseList.add(orderDetailResponse);
+        }
+        orderResponese.setOrderDetails(orderDetailResponseList);
         modelMapper.typeMap(Order.class, OrderResponese.class);
-        return modelMapper.map(order, OrderResponese.class);
+        return orderResponese;
     }
 
     @Override
     public OrderResponese getOrder(Long id) throws Exception {
         Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Cannot find user with id :" + id));
         OrderResponese orderResponese = new OrderResponese();
-        modelMapper.typeMap(Order.class, OrderResponese.class).map(order,orderResponese);
+        modelMapper.typeMap(Order.class, OrderResponese.class).map(order, orderResponese);
         List<OrderDetailResponse> orderDetailResponseList = orderDetailService.findByOrderId(orderResponese.getId());
         orderResponese.setOrderDetails(orderDetailResponseList);
         return orderResponese;
     }
 
     @Override
-    public OrderResponese updateOrder(Long id, OrderDTO orderDTO) throws Exception{
+    public OrderResponese updateOrder(Long id, OrderDTO orderDTO) throws Exception {
         Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Cannot find order with id :" + id));
         User user = userRepository.findById(orderDTO.getUserId()).orElseThrow(() -> new DataNotFoundException("Cannot user order with id :" + id));
-        modelMapper.typeMap(OrderDTO.class,Order.class);
-        modelMapper.map(orderDTO,order);
+        modelMapper.typeMap(OrderDTO.class, Order.class);
+        modelMapper.map(orderDTO, order);
         orderRepository.save(order);
         OrderResponese orderResponese = new OrderResponese();
-        modelMapper.typeMap(Order.class,OrderResponese.class);
-        modelMapper.map(order,orderResponese);
+        modelMapper.typeMap(Order.class, OrderResponese.class);
+        modelMapper.map(order, orderResponese);
         return orderResponese;
     }
 
     @Override
-    public void deleteOrder(Long id)  {
+    public void deleteOrder(Long id) {
         Order order = orderRepository.findById(id).orElse(null);
-        if(order != null){
+        if (order != null) {
             order.setActive(false);
             orderRepository.save(order);
         }

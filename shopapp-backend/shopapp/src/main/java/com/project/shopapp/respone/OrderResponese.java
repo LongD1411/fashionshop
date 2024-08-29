@@ -58,7 +58,7 @@ public class OrderResponese extends BaseResponse{
     @JsonProperty("active")
     private Boolean active;
 
-    @JsonProperty( value = "order_detail")
+    @JsonProperty(value = "order_detail")
     private List<OrderDetailResponse> orderDetails;
 
 }

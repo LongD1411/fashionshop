@@ -1,0 +1,41 @@
+<!-- size home -->
+<div class="container">
+    <div style="display: flex; justify-content: space-between">
+      <div>Danh sách banner</div>
+      <div style="cursor: pointer">
+        <i class="fa-solid fa-plus"></i>
+        <span style="margin-left: 5px">Thêm</span>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr style="text-align: center">
+          <th scope="col">#</th>
+          <th scope="col">Ảnh category</th>
+          <th scope="col">Tiêu đề</th>
+          <th scope="col">Mô tả</th>
+          <th scope="col">Tùy chọn</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categories, let i = index">
+          <th scope="row">{{i+1}}</th>
+          <td>
+            <img *ngIf="category.thumbnail" style="margin-left: 20px; height: 150px" [src]="category.thumbnail"/>
+            <div *ngIf="!category.thumbnail" style="text-align: center;">Chưa có ảnh</div>
+          </td>
+          <td><div style="text-align: left; margin-left: 100px;">{{category.name}}</div></td>
+          <td>...</td>
+          <td>
+            <input class="btn btn-primary btn-sm mr-1"  type="button" value="Sửa" />
+            <input class="btn btn-danger btn-sm" type="button"  value="Xóa" />
+          </td>
+          <td>
+            <input style="margin-left: 20px" type="checkbox" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div></div>
+  </div>
+  <!-- size home end -->

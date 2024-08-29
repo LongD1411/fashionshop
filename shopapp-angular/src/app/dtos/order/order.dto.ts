@@ -1,6 +1,8 @@
+import { CartItem } from './cart.item.dtos';
+
 export class OrderDTO {
   user_id: number;
-  fullname: string;
+  full_name: string;
   email: string;
   phone_number: string;
   address: string;
@@ -9,9 +11,9 @@ export class OrderDTO {
   payment_method: string;
   shipping_method: string;
   coupon_code: string;
-  cart_items: { product_id: number; quantity: number, size_id:number }[];
+  cart_items: CartItem[];
   constructor(data: any) {
-    this.fullname = data.fullname;
+    this.full_name = data.fullname;
     this.user_id = data.user_id;
     this.email = data.email;
     this.address = data.address;

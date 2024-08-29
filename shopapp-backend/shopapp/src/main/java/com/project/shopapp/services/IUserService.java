@@ -11,4 +11,7 @@ public interface IUserService {
     User createUser(UserDTO userDTO) throws Exception;
     String login(String phoneNumber, String password) throws Exception;
     UserResponse getUserByToken(String token);
+    UserResponse updatedUser(String token,UserDTO userDTO);
+    boolean isTokenValid(String token);
+    boolean isUserValid(String token);
 }

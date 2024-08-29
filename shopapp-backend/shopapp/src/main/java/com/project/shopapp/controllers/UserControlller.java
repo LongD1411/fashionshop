@@ -4,6 +4,7 @@ import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.entities.User;
 import com.project.shopapp.respone.LoginResponse;
+import com.project.shopapp.respone.Message;
 import com.project.shopapp.respone.RegisterResponse;
 import com.project.shopapp.respone.UserResponse;
 import com.project.shopapp.services.IUserService;
@@ -66,6 +67,23 @@ public class UserControlller {
             return ResponseEntity.ok(LoginResponse.builder().message(localizationUtils.getLocalizedMessage(MessageKey.LOGIN_SUCCESSFULLY)).token(token).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(LoginResponse.builder().message(localizationUtils.getLocalizedMessage(MessageKey.LOGIN_FAILED, e.getMessage())).build());
+        }
+    }
+    @PutMapping("/update")
+    public ResponseEntity<?> updatedUser(@RequestHeader("Authorization") String token, @RequestBody UserDTO userDTO ,BindingResult result){
+        try{
+            if (result.hasErrors()) {
+                List<String> messages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
+                return ResponseEntity.badRequest().body(RegisterResponse.builder().message("error").build());
+            }
+            if(!token.isEmpty()) {
+                token = token.substring(7);
+                UserResponse userResponse = userService.updatedUser(token,userDTO);
+                return ResponseEntity.ok(userResponse);
+            }
+            return  ResponseEntity.badRequest().body(Message.builder().message("You need to login").build());
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }

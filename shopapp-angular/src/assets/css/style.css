@@ -9582,3 +9582,39 @@ a.text-dark:hover, a.text-dark:focus {
     transform: translateY(-15px);
   }
 }
+.user-nav-2 {
+    display: none; /* Ẩn danh sách mặc định */
+    position: absolute; /* Đảm bảo danh sách hiển thị gần user-nav */
+    background-color: white; /* Màu nền của danh sách */
+    z-index: 20; 
+    width: 200px;
+    margin-left: -50px;
+}
+
+.user-nav:hover .user-nav-2{
+    display: block; /* Hiển thị danh sách khi hover */
+}
+
+.ul-user-nav {
+    list-style-type: none; /* Loại bỏ gạch đầu dòng */
+    padding: 0;
+    margin: 0;
+}
+
+.li-user-nav {
+    padding: 8px 16px; /* Khoảng cách trong của các mục */
+    cursor: pointer; /* Thay đổi con trỏ chuột khi hover */
+}
+
+.li-user-nav:hover {
+    background-color: #f1f1f1; /* Thay đổi màu nền khi hover */
+}
+.custom{
+  background-color: bisque !important;
+}
+.form-control-custom{
+  border: 1px solid;
+}
+.form-control-custom:focus{
+  border: 1px solid ;
+}

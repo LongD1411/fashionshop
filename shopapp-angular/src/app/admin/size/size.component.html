@@ -1,0 +1,47 @@
+<!-- size home -->
+<div class="container">
+  <div style="display: flex; justify-content: space-between">
+    <div>Danh sách size</div>
+    <div style="cursor: pointer" (click)="createSizeNavigate()">
+      <i class="fa-solid fa-plus"></i>
+      <span style="margin-left: 5px">Thêm</span>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Size name</th>
+        <th scope="col">Size code</th>
+        <th scope="col">Tùy chọn</th>
+        <th scope="col">Chọn nhanh</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let size of sizes; let i = index">
+        <th scope="row">{{ i+1 }}</th>
+        <td>{{ size.sizeName }}</td>
+        <td>{{ size.sizeCode }}</td>
+        <td>
+          <input
+            class="btn btn-primary btn-sm mr-1"
+            type="button"
+            (click)="edit(size.id)"
+            value="Sửa"
+          />
+          <input
+            class="btn btn-danger btn-sm"
+            type="button"
+            (click)="remove(size.id)"
+            value="Xóa"
+          />
+        </td>
+        <td>
+          <input style="margin-left: 20px" type="checkbox" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div></div>
+</div>
+<!-- size home end -->

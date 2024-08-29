@@ -2,9 +2,12 @@ package com.project.shopapp.services.impls;
 
 import com.project.shopapp.dtos.BannerDTO;
 import com.project.shopapp.entities.Banner;
+import com.project.shopapp.exceptions.DataNotFoundException;
 import com.project.shopapp.repositories.BannerRespository;
 import com.project.shopapp.respone.BannerResponse;
 import com.project.shopapp.services.IBannerService;
+import com.project.shopapp.utils.ImageUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -32,5 +35,35 @@ public class BannerService implements IBannerService {
                 .title(bannerDTO.getTitle())
                 .build();
         return bannerRespository.save(banner);
+    }
+
+    @Override
+    public Banner getBanner(Long id) throws  Exception{
+        return bannerRespository.findById(id).orElseThrow(()-> new DataNotFoundException("Data not found"));
+    }
+
+    @Override
+    public void deleteBanner(Long id) throws Exception {
+        Banner banner = bannerRespository.findById(id).orElseThrow(()-> new DataNotFoundException("Data not found"));
+        if(banner!=null ){
+            bannerRespository.deleteById(id);
+            ImageUtil.deleteImage(banner.getThumbnail());
+        }
+    }
+
+    @Override
+    @Transactional
+    public Banner updateBanner(BannerDTO bannerDTO) throws Exception {
+        Banner banner = bannerRespository.findById(bannerDTO.getId()).orElseThrow(()-> new DataNotFoundException("Data not found"));
+        banner.setDescription(bannerDTO.getDescription());
+        banner.setTitle(bannerDTO.getTitle());
+        String nameImageDelete = banner.getThumbnail();
+        if(bannerDTO.getThumbnail()!= null) {
+            banner.setThumbnail(bannerDTO.getThumbnail());
+            bannerRespository.save(banner);
+            ImageUtil.deleteImage(nameImageDelete);
+            return banner;
+        }
+        return  bannerRespository.save(banner);
     }
 }

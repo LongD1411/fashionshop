@@ -8,6 +8,13 @@ import { DetailProductComponent } from './components/detail-product/detail-produ
 import { OderConfirmComponent } from './components/oder-confirm/oder-detail.component';
 import { UserDetailComponent } from './components/user.detail/user.detail.component';
 import { ProductComponent } from './components/product/product.component';
+import { OrderSuccessComponent } from './components/order.success/order.success.component';
+import { AdminComponent } from './admin/admin.component';
+import { SizeComponent } from './admin/size/size.component';
+import { SizeEditComponent } from './admin/size/size.edit.component';
+import { BannerComponent } from './admin/banner/banner.component';
+import { BannerEditComponent } from './admin/banner/banner.edit.component';
+import { CategoryComponent } from './admin/category/category.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +28,10 @@ export const routes: Routes = [
   {
     path: 'gio-hang',
     component: OrderComponent,
+  },
+  {
+    path: 'thong-tin-don-hang',
+    component: OrderSuccessComponent,
   },
   {
     path: 'xac-nhan',
@@ -39,8 +50,35 @@ export const routes: Routes = [
     component: DetailProductComponent,
   },
   {
-    path: 'users/detail',
+    path: 'thong-tin-ca-nhan',
     component: UserDetailComponent,
+    // canActivate: [AuthGuardFn],
+  },
+  {
+    path: 'quan-ly',
+    component: AdminComponent,
+    children: [
+      {
+        path: 'size',
+        component: SizeComponent,
+      },
+      {
+        path: 'size/edit',
+        component: SizeEditComponent,
+      },
+      {
+        path: 'banner',
+        component: BannerComponent,
+      },
+      {
+        path: 'banner/edit',
+        component: BannerEditComponent,
+      },
+      {
+        path: 'category',
+        component: CategoryComponent,
+      },
+    ],
   },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

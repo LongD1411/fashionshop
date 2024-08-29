@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { enviroment } from '../../enviroments/enviroment';
 import { ProductService } from '../../service/product.service';
 import { ProductResponse } from '../../responses/product/product.response';
-import { max } from 'rxjs';
+import { forkJoin, max } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../service/category.service';
 import { CategoryResponse } from '../../responses/category/category.respones';
 import { BannerResponse } from '../../responses/banner.respose';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../service/cart.service';
+import { UserService } from '../../service/user.service';
+import { UserResponse } from '../../responses/user/user.response';
+import { SweetAlertService } from '../../service/sweet-alert.service';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -19,39 +22,37 @@ export class HomeComponent {
   categories: CategoryResponse[] = [];
   banners: BannerResponse[] = [];
   top8ProductUpdated: ProductResponse[] = [];
+  userResponse: UserResponse | undefined;
   constructor(
     private categoryService: CategoryService,
     private productService: ProductService,
     private router: Router,
-    private cartService: CartService
+    private userService: UserService,
+    private alert: SweetAlertService
   ) {}
   ngOnInit(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (response) => {
-        this.categories = response;
+    forkJoin([
+      this.categoryService.getCategories(),
+      this.categoryService.getAllBanners(),
+      this.productService.getTop8ProductUpdated(),
+    ]).subscribe({
+      next: ([categoriesResponse, bannersResponse, productResponse]) => {
+        //1
+        this.categories = categoriesResponse;
         this.categories.map((category) => {
           if (category.thumbnail) {
             category.thumbnail = `${enviroment.apiImage}/${category.thumbnail}`;
           }
           return category;
         });
-      },
-    });
-    this.categoryService.getBanners().subscribe({
-      next: (response) => {
-        this.banners = response;
+        //2
+        this.banners = bannersResponse;
         this.banners.map((banner) => {
           banner.thumbnail = `${enviroment.apiImage}/${banner.thumbnail}`;
           return banner;
         });
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
-    this.productService.getTop8ProductUpdated().subscribe({
-      next: (response) => {
-        this.top8ProductUpdated = response;
+        //3
+        this.top8ProductUpdated = productResponse;
         this.top8ProductUpdated.map((product) => {
           product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
         });
@@ -61,9 +62,21 @@ export class HomeComponent {
       },
       complete: () => {},
     });
+    this.userService.getUserDetail().subscribe({
+      next: (response) => {
+        this.userResponse = response;
+      },
+      error: (error) => {
+        this.userResponse = undefined;
+      },
+    });
   }
   viewProductDetails(productId: number) {
     this.router.navigate(['/chi-tiet-san-pham', productId]);
+  }
+  logout() {
+    this.userService.logout();
+    this.alert.showSuccess('Đăng xuất thành công');
   }
   // products: ProductResponse[] = [];
   // currentPage: number = 1;

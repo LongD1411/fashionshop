@@ -1,0 +1,45 @@
+<!-- Edit Banner -->
+<div class="container">
+    <h3 class="text-center">Chỉnh sửa banner</h3>
+    <div class="d-flex justify-content-center">
+        <form [formGroup]="bannerForm">
+            <table class="table-borderless" style="border-spacing: 20px">
+                <tbody>
+                    <tr *ngIf="banner?.thumbnail">
+                        <td style="width: 150px">Ảnh hiện tại</td>
+                        <td><img class="img-thumbnail" style="height: 150px; width: auto" [src]="banner?.thumbnail" /></td>
+                    </tr>
+                    <tr>
+                        <td>Tiêu đề</td>
+                        <td>
+                            <input class="form-control form-control-custom" formControlName="title" style="width: 300px" type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mô tả</td>
+                        <td>
+                            <input class="form-control form-control-custom" formControlName="description" style="width: 300px" type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ảnh cập nhật</td>
+                        <td>
+                            <div class="image-upload">
+                                <input class="form-control" type="file" (change)="onFileSelected($event)" accept="image/*" />
+                                <div *ngIf="selectedImage" class="mt-2">
+                                    <img class="img-thumbnail" style="height: 150px;" [src]="selectedImage" alt="Selected Image" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center mt-3">
+                <button *ngIf="bannerId" class="btn btn-primary ml-2" (click)="updateBanner()">Cập nhật</button>
+                <button *ngIf="!bannerId" class="btn btn-primary ml-2" type="button" (click)="createBanner()">Thêm</button>
+                <button class="btn btn-danger ml-2" type="button" >Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Edit Banner End -->

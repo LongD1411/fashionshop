@@ -1,125 +1,159 @@
-
-    <!-- Page Header Start -->
-    <div class="container-fluid bg-secondary mb-5">
-      <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
-          <h1 class="font-weight-semi-bold text-uppercase mb-3">Xác nhận đặt hàng</h1>
-          <div class="d-inline-flex">
-              <p class="m-0"><a href="/">Trang chủ</a></p>
-              <p class="m-0 px-2">-</p>
-              <p class="m-0">Đặt hàng</p>
-          </div>
-      </div>
+<!-- Page Header Start -->
+<div class="container-fluid bg-secondary mb-5">
+  <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+    <h1 class="font-weight-semi-bold text-uppercase mb-3">Xác nhận đặt hàng</h1>
+    <div class="d-inline-flex">
+      <p class="m-0"><a routerLink="/">Trang chủ</a></p>
+      <p class="m-0 px-2">-</p>
+      <p class="m-0">Đặt hàng</p>
+    </div>
   </div>
-  <!-- Page Header End -->
+</div>
+<!-- Page Header End -->
 
-
-  <!-- Checkout Start -->
-  <div class="container-fluid pt-5">
-      <div class="row px-xl-5">
-          <div class="col-lg-8">
-              <div class="mb-4">
-                  <h4 class="font-weight-semi-bold mb-4">Thông tin người nhận</h4>
-                  <div class="row">
-                      <div class="col-md-6 form-group">
-                          <label>Ho</label>
-                          <input class="form-control" type="text" >
-                      </div>
-                      <div class="col-md-6 form-group">
-                          <label>Tên</label>
-                          <input class="form-control" type="text" >
-                      </div>
-                      <div class="col-md-6 form-group">
-                          <label>Email</label>
-                          <input class="form-control" type="text">
-                      </div>
-                      <div class="col-md-6 form-group">
-                          <label>Số điện thoại</label>
-                          <input class="form-control" type="text" >
-                      </div>
-                      <div class="col-md-6 form-group">
-                          <label>Địa chỉ</label>
-                          <input class="form-control" type="text" >
-                      </div>
-                      <div class="col-md-12 form-group">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" id="newaccount">
-                              <label class="custom-control-label" for="newaccount">Create an account</label>
-                          </div>
-                      </div>
-                      <div class="col-md-12 form-group">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" id="shipto">
-                              <label class="custom-control-label" for="shipto"  data-toggle="collapse" data-target="#shipping-address">Ship to different address</label>
-                          </div>
-                      </div>
-                  </div>
+<!-- Checkout Start -->
+<div class="container-fluid pt-5" #scrollTarget>
+  <div class="row px-xl-5">
+    <div class="col-lg-8">
+      <div class="mb-4">
+        <h4 class="font-weight-semi-bold mb-4">Thông tin người nhận</h4>
+        <div class="row">
+          <ng-container [formGroup]="orderForm">
+            <div class="col-md-6 form-group">
+              <label>Họ và tên</label>
+              <input class="form-control" [ngClass]="{
+                'is-valid': orderForm.get('full_name')?.valid && (orderForm.get('full_name')?.touched || orderForm.get('full_name')?.dirty),
+                'is-invalid': !orderForm.get('full_name')?.valid && (orderForm.get('full_name')?.touched || orderForm.get('full_name')?.dirty)  
+              }" type="text" formControlName="full_name" />
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Email</label>
+              <input class="form-control" type="email" [ngClass]="{
+                  'is-valid': orderForm.get('email')?.valid && (orderForm.get('email')?.touched || orderForm.get('email')?.dirty),
+                  'is-invalid': !orderForm.get('email')?.valid && (orderForm.get('email')?.touched || orderForm.get('email')?.dirty)  
+                }" formControlName="email" />
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Số điện thoại</label>
+              <input class="form-control" type="text" [ngClass]="{
+                  'is-valid': orderForm.get('phone_number')?.valid && (orderForm.get('phone_number')?.touched || orderForm.get('phone_number')?.dirty),
+                  'is-invalid': !orderForm.get('phone_number')?.valid && (orderForm.get('phone_number')?.touched || orderForm.get('phone_number')?.dirty)  
+                }" formControlName="phone_number" />
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Địa chỉ</label>
+              <input class="form-control" type="text" [ngClass]="{
+                  'is-valid': orderForm.get('address')?.valid && (orderForm.get('address')?.touched || orderForm.get('address')?.dirty),
+                  'is-invalid': !orderForm.get('address')?.valid && (orderForm.get('address')?.touched || orderForm.get('address')?.dirty)  
+                }" formControlName="address" />
+            </div>
+            <div class="col-md-6 form-group">
+              <label>Ghi chú</label>
+              <input class="form-control" type="text" formControlName="note" />
+            </div>
+            <div class="col-md-12 form-group">
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="newaccount" />
+                <label class="custom-control-label" for="newaccount">Create an account</label>
               </div>
-          </div>
-          <div class="col-lg-4">
-              <div class="card border-secondary mb-5">
-                  <div class="card-header bg-secondary border-0">
-                      <h4 class="font-weight-semi-bold m-0">Thông tin đặt hàng</h4>
-                  </div>
-                  <div class="card-body">
-                      <h5 class="font-weight-medium mb-3">Sản phẩm</h5>
-                      <div class="d-flex justify-content-between">
-                          <p>Colorful Stylish Shirt 1</p>
-                          <p>$150</p>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                          <p>Colorful Stylish Shirt 2</p>
-                          <p>$150</p>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                          <p>Colorful Stylish Shirt 3</p>
-                          <p>$150</p>
-                      </div>
-                      <hr class="mt-0">
-                      <div class="d-flex justify-content-between mb-3 pt-1">
-                          <h6 class="font-weight-medium">Tổng sản phẩm</h6>
-                          <h6 class="font-weight-medium">$150</h6>
-                      </div>
-                      <div class="d-flex justify-content-between">
-                          <h6 class="font-weight-medium">Phí ship</h6>
-                          <h6 class="font-weight-medium">$10</h6>
-                      </div>
-                  </div>
-                  <div class="card-footer border-secondary bg-transparent">
-                      <div class="d-flex justify-content-between mt-2">
-                          <h5 class="font-weight-bold">Tổng cộng</h5>
-                          <h5 class="font-weight-bold">$160</h5>
-                      </div>
-                  </div>
+            </div>
+            <div class="col-md-12 form-group">
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="shipto" />
+                <label class="custom-control-label" for="shipto" data-toggle="collapse"
+                  data-target="#shipping-address">Ship to different address</label>
               </div>
-              <div class="card border-secondary mb-5">
-                  <div class="card-header bg-secondary border-0">
-                      <h4 class="font-weight-semi-bold m-0">Phương thức thanh toán</h4>
-                  </div>
-                  <div class="card-body">
-                      <div class="form-group">
-                          <div class="custom-control custom-radio">
-                              <input type="radio" class="custom-control-input" name="payment" id="directcheck">
-                              <label class="custom-control-label" for="directcheck">COD</label>
-                          </div>
-                      </div>
-                      <div class="form-group">
-                          <div class="custom-control custom-radio">
-                              <input type="radio" class="custom-control-input" name="payment" id="banktransfer">
-                              <label class="custom-control-label" for="banktransfer">Chuyển khoản ngân hàng</label>
-                          </div>
-                      </div>
-                      <div class="form-group">
-                        <div class="custom-control custom-radio">
-                            <input type="radio" class="custom-control-input" name="payment" id="momo">
-                            <label class="custom-control-label" for="banktransfer">Momo</label>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="card-footer border-secondary bg-transparent">
-                      <button class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">Place Order</button>
-                  </div>
-              </div>
-          </div>
+            </div>
+          </ng-container>
+        </div>
       </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card border-secondary mb-5">
+        <div class="card-header bg-secondary border-0">
+          <h4 class="font-weight-semi-bold m-0">Thông tin đặt hàng</h4>
+        </div>
+        <div class="card-body">
+          <h5 class="font-weight-medium mb-3">Sản phẩm</h5>
+          <ng-container *ngFor="let item of localProduct">
+            <div class="d-flex justify-content-between">
+              <p>{{item.product.name}}</p>
+              <p>{{item.product.price}} VNĐ</p>
+            </div>
+          </ng-container>
+          <hr class="mt-0" />
+          <div class="d-flex justify-content-between">
+            <h6 class="font-weight-medium">Phí ship</h6>
+            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">10 VNĐ</h6>
+          </div>
+          <div class="d-flex justify-content-between mb-3 pt-1">
+            <h6 class="font-weight-medium">Tổng sản phẩm</h6>
+            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">{{getTotal()}} VNĐ</h6>
+          </div>
+        </div>
+        <div class="card-footer border-secondary bg-transparent">
+          <div class="d-flex justify-content-between mt-2">
+            <h5 class="font-weight-bold">Tổng cộng</h5>
+            <h5 *ngIf="localProduct.length >0" class="font-weight-bold">{{getTotal()+10}} VNĐ</h5>
+          </div>
+        </div>
+      </div>
+      <div class="card border-secondary mb-5">
+        <div class="card-header bg-secondary border-0">
+          <h4 class="font-weight-semi-bold m-0">Phương thức vận chuyển</h4>
+        </div>
+        <div class="card-body" [formGroup]="orderForm">
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="shipping_method" formControlName="shipping_method"
+                value="express" id="express" />
+              <label class="custom-control-label" for="express">Nhanh</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="shipping_method" formControlName="shipping_method"
+                value="normal" id="normal" />
+              <label class="custom-control-label" for="normal">Thường</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card border-secondary mb-5">
+        <div class="card-header bg-secondary border-0">
+          <h4 class="font-weight-semi-bold m-0">Phương thức thanh toán</h4>
+        </div>
+        <div class="card-body" [formGroup]="orderForm">
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="payment_method" formControlName="payment_method"
+                value="cod" id="cod" />
+              <label class="custom-control-label" for="cod">COD</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="payment_method" formControlName="payment_method"
+                value="bank_transfer" id="bank_transfer" />
+              <label class="custom-control-label" for="bank_transfer">Chuyển khoản ngân hàng</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="payment_method" formControlName="payment_method"
+                value="momo" id="momo" />
+              <label class="custom-control-label" for="momo">Momo</label>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer border-secondary bg-transparent">
+          <button [disabled]="orderForm.invalid" (click)="submitHandler()"
+            class="btn btn-lg btn-block btn-primary font-weight-bold my-3 py-3">
+            Đặt hàng
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-  <!-- Checkout End -->
+</div>
+<!-- Checkout End -->

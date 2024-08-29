@@ -32,6 +32,9 @@ public class OrderDetail {
     @Column(name = "price", nullable = false)
     private Float price;
 
+    @Column(name = "quantity", nullable = false)
+    private Integer quantity;
+
     @Column(name = "number_of_products", nullable = false)
     private Integer numberOfProducts;
 

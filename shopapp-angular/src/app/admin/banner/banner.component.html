@@ -1,0 +1,40 @@
+<!-- size home -->
+<div class="container">
+  <div style="display: flex; justify-content: space-between">
+    <div>Danh sách banner</div>
+    <div style="cursor: pointer" (click)="createBanner()">
+      <i class="fa-solid fa-plus"></i>
+      <span style="margin-left: 5px">Thêm</span>
+    </div>
+  </div>
+  <table class="table">
+    <thead>
+      <tr style="text-align: center">
+        <th scope="col">#</th>
+        <th scope="col">Ảnh banner</th>
+        <th scope="col">Tiêu đề</th>
+        <th scope="col">Mô tả</th>
+        <th scope="col">Tùy chọn</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let banner of banners">
+        <th scope="row">1</th>
+        <td>
+          <img style="margin-left: 20px; height: 150px" [src]="banner.thumbnail" />
+        </td>
+        <td>{{ banner.title }}</td>
+        <td>{{ banner.description }}</td>
+        <td>
+          <input class="btn btn-primary btn-sm mr-1" (click)="updatedBanner(banner.id)" type="button" value="Sửa" />
+          <input class="btn btn-danger btn-sm" type="button" (click)="deleteBanner(banner.id)" value="Xóa" />
+        </td>
+        <td>
+          <input style="margin-left: 20px" type="checkbox" />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div></div>
+</div>
+<!-- size home end -->

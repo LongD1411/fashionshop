@@ -11,7 +11,7 @@ export class CartService {
   private cartQuantity: BehaviorSubject<number>;
   private realCart: {
     product: ProductResponse | undefined;
-    size_name: string | undefined;
+    size: string | undefined;
     quantity: number;
   }[] = [];
   private cartSubject: BehaviorSubject<CartItemStorage[]>;
@@ -20,6 +20,7 @@ export class CartService {
     if (storeCart) {
       this.cart = JSON.parse(storeCart);
     }
+
     this.cartQuantity = new BehaviorSubject<number>(this.cart.length);
     this.cartSubject = new BehaviorSubject<CartItemStorage[]>(this.cart);
   }
@@ -70,11 +71,14 @@ export class CartService {
   getQuantity(): Observable<number> {
     return this.cartQuantity.asObservable();
   }
-    removeItem(id: number): void {
-      this.cart = this.cart.filter(item => item.product_id !== id);
-      this.updateCart(this.cart);
-    }
-
+  removeItem(id: number): void {
+    this.cart = this.cart.filter((item) => item.product_id !== id);
+    this.updateCart(this.cart);
+  }
+  removeCart() {
+    localStorage.removeItem('Cart');
+    this.updateCart([]);
+  }
   updateCart(cart: CartItemStorage[]): void {
     this.cart = cart;
     this.setCartToLocal();

@@ -3,6 +3,8 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../service/cart.service';
 import { Subscription } from 'rxjs';
+import { UserService } from '../../service/user.service';
+import { UserResponse } from '../../responses/user/user.response';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +15,7 @@ import { Subscription } from 'rxjs';
 export class HeaderComponent implements OnInit, OnDestroy {
   itemCartQuantity: number = 0;
   private cartSubscription!: Subscription;
-
+  userResponse: UserResponse | undefined;
   constructor(private cartService: CartService) {}
 
   ngOnInit() {
@@ -22,6 +24,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       .subscribe((quantity) => {
         this.itemCartQuantity = quantity;
       });
+    
   }
 
   ngOnDestroy() {

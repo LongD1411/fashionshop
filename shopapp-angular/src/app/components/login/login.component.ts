@@ -10,10 +10,12 @@ import { UserService } from '../../service/user.service';
 import { LoginDTO } from '../../dtos/user/login.dto';
 import { TokenService } from '../../service/token.service';
 import { LoginResponse } from '../../responses/user/login.response';
+import { Router, RouterLink } from '@angular/router';
+import { SweetAlertService } from '../../service/sweet-alert.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -25,7 +27,9 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private router: Router,
+    private alert: SweetAlertService
   ) {
     this.loginForm = this.fb.group({
       phone: ['', [Validators.required, Validators.minLength(6)]],
@@ -43,11 +47,13 @@ export class LoginComponent {
           this.registrationMessage = response.message;
           const { token } = response;
           this.tokenService.setToken(token);
+          this.router.navigate(['/']);
+          this.alert.showSuccess('Đăng nhập thành công');
         },
         error: (error: any) => {
-          this.registrationMessage = error.error || 'Something wrong :(';
+          this.registrationMessage =
+            error.error.message || 'Something wrong :(';
           this.isError = true;
-          console.log(error);
         },
         complete: () => {},
       });
@@ -61,5 +67,8 @@ export class LoginComponent {
   }
   get password() {
     return this.loginForm.get('password')!;
+  }
+  homeNavigate() {
+    this.router.navigate(['/']);
   }
 }

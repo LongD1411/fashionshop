@@ -38,18 +38,22 @@ import static com.project.shopapp.statics.Image.MAXIMUM_IMAGES;
 public class BannerController {
     private  final IBannerService iBannerService;
     @GetMapping("")
-    public ResponseEntity<?> getAllBanner(){
+    public ResponseEntity<?> getBanner(@RequestParam(value = "id", required = false) Long id){
         try {
-            List<Banner> bannerResponses = iBannerService.getAllBanner();
-            return ResponseEntity.ok(bannerResponses);
+            if(id!=null){
+                Banner banner = iBannerService.getBanner(id);
+                return ResponseEntity.ok(banner);
+            }else {
+                List<Banner> bannerResponses = iBannerService.getAllBanner();
+                return ResponseEntity.ok(bannerResponses    );
+            }
         }catch (Exception e){
             return  ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
         }
     }
-    @PostMapping(value = "upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createBanner(@RequestParam("file") MultipartFile file,
-                                          @RequestParam("title") String title,
-                                          @RequestParam("description") String description) {
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> createBanner(@RequestPart("file") MultipartFile file,
+                                         @RequestPart("banner") BannerDTO bannerDTO) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body(Message.builder().message("You must upload an image").build());
@@ -62,12 +66,42 @@ public class BannerController {
             // Lưu file và cập nhật thumbnail trong dto
             String fileName = ImageUtil.storeFile(file);
 
-            BannerDTO bannerDTO = new BannerDTO();
-            bannerDTO.setTitle(title);
-            bannerDTO.setDescription(description);
             bannerDTO.setThumbnail(fileName);
+
             // Save the BannerDTO to the database
             Banner savedBanner = iBannerService.createBanner(bannerDTO);
+            return ResponseEntity.ok(savedBanner);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
+        }
+    }
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteBanner(@RequestParam("id") Long id){
+        try {
+            iBannerService.deleteBanner(id);
+            return  ResponseEntity.ok(Message.builder().message("Xóa thành công").build());
+        }catch (Exception e){
+            return  ResponseEntity.badRequest().body(Message.builder().message("Xóa không thành công").build());
+        }
+    }
+    @PutMapping("")
+        public ResponseEntity<?> updateBanner(@RequestPart(value = "banner") BannerDTO bannerDTO,
+                                          @RequestPart(value = "file",required = false) MultipartFile file){
+        try {
+                if(file != null) {
+                    // Kiểm tra kích thước file và định dạng
+                    ResponseEntity<?> fileCheckResult = ImageUtil.checkImage(file);
+                    if (fileCheckResult != null) {
+                        return fileCheckResult;
+                    }
+                    // Lưu file và cập nhật thumbnail trong dto
+                    String fileName = ImageUtil.storeFile(file);
+
+                    bannerDTO.setThumbnail(fileName);
+                }
+            // update  Banner to the database
+            Banner savedBanner = iBannerService.updateBanner(bannerDTO);
+
             return ResponseEntity.ok(savedBanner);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());

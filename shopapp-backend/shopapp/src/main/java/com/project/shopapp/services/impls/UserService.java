@@ -10,6 +10,7 @@ import com.project.shopapp.repositories.RoleRepository;
 import com.project.shopapp.repositories.UserRepository;
 import com.project.shopapp.respone.UserResponse;
 import com.project.shopapp.services.IUserService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -43,6 +44,7 @@ public class UserService implements IUserService {
                 .phoneNumber(userDTO.getPhoneNumber())
                 .password(userDTO.getPassword())
                 .address(userDTO.getAddress())
+                .active(true)
                 .dateOfBirth(userDTO.getDateOfBirth())
                 .facebookAccountId(userDTO.getFacebookAccountId())
                 .googleAccountId(userDTO.getGoogleAccountId())
@@ -84,9 +86,42 @@ public class UserService implements IUserService {
     public UserResponse getUserByToken(String token) {
         String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
         User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
-                ()-> new UsernameNotFoundException("Can't login with phone number" + phoneNumber));
+                ()-> new UsernameNotFoundException("Can't find with phone number" + phoneNumber));
         UserResponse userResponse = new UserResponse();
         modelMapper.typeMap(User.class, UserResponse.class).map(user,userResponse);
         return userResponse;
+    }
+
+    @Override
+    @Transactional
+    public UserResponse updatedUser(String token,UserDTO userDTO) {
+        String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
+        User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
+                ()-> new UsernameNotFoundException("The phone number does not exist " + phoneNumber));
+        if(user.getPhoneNumber().equals(userDTO.getPhoneNumber())){
+            user.setFullName(userDTO.getFullName());
+            user.setAddress(userDTO.getAddress());
+            user.setDateOfBirth(userDTO.getDateOfBirth());
+            userRepository.save(user);
+        }
+        UserResponse userResponse = new UserResponse();
+        modelMapper.typeMap(User.class, UserResponse.class).map(user,userResponse);
+        return  userResponse;
+    }
+
+    @Override
+    public boolean isTokenValid(String token) {
+        String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
+        User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
+                ()-> new UsernameNotFoundException("The phone number does not exist " + phoneNumber));
+        return  jwtTokenUtil.validateToken(token,user);
+    }
+
+    @Override
+    public boolean isUserValid(String token) {
+        String phoneNumber = jwtTokenUtil.extractPhoneNumber(token);
+        User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
+                ()-> new UsernameNotFoundException("The phone number does not exist " + phoneNumber));
+        return (user.getRole().getName().equals("USER"));
     }
 }

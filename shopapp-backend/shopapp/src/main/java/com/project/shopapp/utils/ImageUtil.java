@@ -47,4 +47,8 @@ public class ImageUtil {
         }
         return null;
     }
+    public static void deleteImage(String imageName) throws IOException {
+            Path filePath = Paths.get("uploadDir",imageName);
+            Files.deleteIfExists(filePath);
+    }
 }

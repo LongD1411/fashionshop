@@ -12,11 +12,12 @@ import {
 } from '@angular/forms';
 import { UserService } from '../../service/user.service';
 import { RegisterDTO } from '../../dtos/user/register.dto';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -25,7 +26,11 @@ export class RegisterComponent {
   registrationMessage: string = '';
   isError: boolean = false;
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {
     this.profileForm = this.fb.group(
       {
         phone: ['', [Validators.required, Validators.minLength(6)]],
@@ -38,23 +43,6 @@ export class RegisterComponent {
       },
       { validator: this.passwordMatchValidator }
     );
-    //   const headers = new HttpHeaders({'Content-Type' : 'application/json'});
-    //   this.http.post(apiUrl,registerData,{headers})
-    //          .subscribe({
-    //             next: (respone: any) =>{
-    //                if(respone && (respone.status === 200 || respone.status===201)){
-    //                   this.ruoter.navigate(['/login']);
-    //                }
-    //             },
-    //             complete:()=>{
-
-    //             },
-    //             error:(error: any) =>{
-    //                alert(`Cannot register, error : ${error.error}`)
-    //             }
-    //          }
-
-    //          )
   }
   onPhoneChange() {}
   submitHandler() {
@@ -73,20 +61,20 @@ export class RegisterComponent {
 
       this.userService.registerData(registerDTO).subscribe({
         next: (response: any) => {
-          this.registrationMessage = response;
+          this.registrationMessage = 'Đăng ký thành công!';
           this.isError = false;
-          console.log(response);
         },
         error: (error: any) => {
+          const errorResponse = JSON.parse(error.error);
           this.registrationMessage =
-            error.error || 'An error occurred during registration';
-          this.isError = true;
+            errorResponse.message || 'An error occurred during registration';
           console.log(error);
+          this.isError = true;
         },
         complete: () => {},
       });
     } else {
-      this.registrationMessage = 'Please fill all required fields correctly.';
+      this.registrationMessage = 'Vui lòng nhập đủ thông tin.';
       this.isError = true;
     }
   }
@@ -117,7 +105,7 @@ export class RegisterComponent {
     ) {
       age--;
     }
-    return age < 8 ? { ageUnder8: true } : null;
+    return age < 16 ? { ageUnder16: true } : null;
   }
 
   get phone() {
@@ -140,5 +128,8 @@ export class RegisterComponent {
   }
   get isAccepted() {
     return this.profileForm.get('isAccepted')!;
+  }
+  homeNavigate() {
+    this.router.navigate(['/']);
   }
 }

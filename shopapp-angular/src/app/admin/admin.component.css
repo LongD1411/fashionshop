@@ -1,0 +1,27 @@
+.menu {
+    background-color: rgb(249, 171, 97);
+    height: 50px;
+}
+
+.ul_menu {
+    display: flex;
+    list-style-type: none;
+    justify-content: center;
+}
+
+.li_menu {
+    line-height: 50px;
+    padding: 0px 15px;
+    position: relative;
+    width: 200px;
+    text-align: center;
+}
+
+.li_menu:hover {
+    background-color: #fb801b;
+}
+a{
+    text-decoration: none;
+    color: white;
+}
+

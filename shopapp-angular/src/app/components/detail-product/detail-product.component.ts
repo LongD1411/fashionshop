@@ -7,6 +7,7 @@ import { enviroment } from '../../enviroments/enviroment';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../service/cart.service';
 import { Size } from '../../responses/size.response';
+import { SweetAlertService } from '../../service/sweet-alert.service';
 @Component({
   selector: 'app-detail-product',
   standalone: true,
@@ -23,7 +24,8 @@ export class DetailProductComponent implements OnInit {
     private route: ActivatedRoute,
     private productService: ProductService,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    private alert: SweetAlertService
   ) {}
   ngOnInit(): void {
     window.scroll(0, 0);
@@ -82,7 +84,6 @@ export class DetailProductComponent implements OnInit {
   viewProductDetails(productId: number) {
     this.router
       .navigate(['/chi-tiet-san-pham', productId])
-      .then(() => window.location.reload())
       .then(() => window.scroll(0, 0));
   }
   addToCart(id: string) {
@@ -90,6 +91,7 @@ export class DetailProductComponent implements OnInit {
     if (ID) {
       this.cartService.setCart(ID, this.selectedSizeId!, 1);
     }
+    this.alert.showSuccess('Thêm thành công');
   }
   onSizeChange(sizeId: number): void {
     this.selectedSizeId = sizeId;

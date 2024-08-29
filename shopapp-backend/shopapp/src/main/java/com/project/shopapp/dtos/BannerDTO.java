@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BannerDTO {
+    private Long id;
     @NotBlank(message = "Title cannot be blank")
     private String title;
 

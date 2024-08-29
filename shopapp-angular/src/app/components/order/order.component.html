@@ -6,7 +6,7 @@
   >
     <h1 class="font-weight-semi-bold text-uppercase mb-3">Trang giỏ hàng</h1>
     <div class="d-inline-flex">
-      <p class="m-0"><a href="/">Trang chủ</a></p>
+      <p class="m-0"><a routerLink="/">Trang chủ</a></p>
       <p class="m-0 px-2">-</p>
       <p class="m-0">Giỏ hàng</p>
     </div>
@@ -67,7 +67,7 @@
                   </div>
                 </div>
               </td>
-              <td class="align-middle">{{item.size_name}}</td>
+              <td class="align-middle">{{item.size?.sizeName}}</td>
               <td class="align-middle">
                 {{ item.product!.price * item.quantity }}
               </td>
@@ -116,7 +116,7 @@
             <h5 class="font-weight-bold">Tổng cộng</h5>
             <h5  *ngIf="localProduct.length>0" class="font-weight-bold">{{ getTotal() + 10 }}</h5>
           </div>
-          <button [disabled]="localProduct.length<=0" class="btn btn-block btn-primary my-3 py-3">
+          <button [disabled]="localProduct.length<=0" class="btn btn-block btn-primary my-3 py-3" (click)="toConfirm()">
             Xác nhận đơn hàng
           </button>
         </div>
