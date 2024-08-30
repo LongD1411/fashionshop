@@ -33,10 +33,7 @@ public class UserControlller {
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> createUser(@Valid @RequestBody UserDTO userDTO, BindingResult result) {
         try {
-            if (result.hasErrors()) {
-                List<String> messages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-                return ResponseEntity.badRequest().body(RegisterResponse.builder().message("error").build());
-            }
+
             if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
                 return ResponseEntity.badRequest().body(RegisterResponse.builder().message(localizationUtils.getLocalizedMessage(MessageKey.PASSWORD_NOT_MATCH)).build());
             }

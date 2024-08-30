@@ -2,7 +2,7 @@
 <div class="container">
     <div style="display: flex; justify-content: space-between">
       <div>Danh sách banner</div>
-      <div style="cursor: pointer">
+      <div style="cursor: pointer" (click)="createNavigate()">
         <i class="fa-solid fa-plus"></i>
         <span style="margin-left: 5px">Thêm</span>
       </div>
@@ -27,8 +27,8 @@
           <td><div style="text-align: left; margin-left: 100px;">{{category.name}}</div></td>
           <td>...</td>
           <td>
-            <input class="btn btn-primary btn-sm mr-1"  type="button" value="Sửa" />
-            <input class="btn btn-danger btn-sm" type="button"  value="Xóa" />
+            <input class="btn btn-primary btn-sm mr-1"  type="button" value="Sửa" (click)="updateNavigate(category.id)" />
+            <input class="btn btn-danger btn-sm" type="button" (click)="deleteCategory(category.id)" value="Xóa" />
           </td>
           <td>
             <input style="margin-left: 20px" type="checkbox" />

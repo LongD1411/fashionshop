@@ -11,9 +11,25 @@ import { BannerResponse } from '../responses/banner.respose';
 export class CategoryService {
   constructor(private http: HttpClient) {}
   apiBanner = `${enviroment.apiBaseUrl}/banner`;
+  apiCategories = `${enviroment.apiBaseUrl}/categories`;
   getCategories(): Observable<CategoryResponse[]> {
-    const apiGetCategories = `${enviroment.apiBaseUrl}/categories`;
-    return this.http.get<CategoryResponse[]>(apiGetCategories);
+    return this.http.get<CategoryResponse[]>(this.apiCategories);
+  }
+  getCategory(id: number): Observable<CategoryResponse> {
+    const param = new HttpParams().set('id', id);
+    return this.http.get<CategoryResponse>(this.apiCategories, {
+      params: param,
+    });
+  }
+  deleteCategory(id: number): Observable<any> {
+    const param = new HttpParams().set('id', id);
+    return this.http.delete<any>(this.apiCategories, { params: param });
+  }
+  createCategory(data: FormData): Observable<CategoryResponse> {
+    return this.http.post<CategoryResponse>(this.apiCategories, data);
+  }
+  updateCategory(data: FormData): Observable<CategoryResponse> {
+    return this.http.put<CategoryResponse>(this.apiCategories, data);
   }
   getAllBanners(): Observable<BannerResponse[]> {
     return this.http.get<BannerResponse[]>(this.apiBanner);

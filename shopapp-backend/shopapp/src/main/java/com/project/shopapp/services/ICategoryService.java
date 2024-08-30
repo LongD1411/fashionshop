@@ -3,14 +3,16 @@ package com.project.shopapp.services;
 import com.project.shopapp.dtos.CategoryDTO;
 import com.project.shopapp.entities.Category;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 @Service
 public interface ICategoryService {
     Category createCategory(CategoryDTO categoryDTO);
     Category getCategoryById(Long id);
     List<Category> getAllCategories();
-    Category updateCategory(long id, CategoryDTO categoryDTO);
-    void deleteCategory(long id);
+    Category updateCategory(MultipartFile file, CategoryDTO categoryDTO) throws Exception;
+    void deleteCategory(long id) throws  Exception;
 
 }
