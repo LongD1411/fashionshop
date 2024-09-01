@@ -16,6 +16,8 @@ import { BannerComponent } from './admin/banner/banner.component';
 import { BannerEditComponent } from './admin/banner/banner.edit.component';
 import { CategoryComponent } from './admin/category/category.component';
 import { CategoryEditComponent } from './admin/category/category.edit.component';
+import { AdminProductComponent } from './admin/product/product.component';
+import { ProductEditComponent } from './admin/product/product.edit.component';
 
 export const routes: Routes = [
   {
@@ -82,6 +84,14 @@ export const routes: Routes = [
       {
         path: 'category/edit',
         component: CategoryEditComponent,
+      },
+      {
+        path: 'product',
+        component: AdminProductComponent,
+      },
+      {
+        path: 'product/edit',
+        component: ProductEditComponent,
       },
     ],
   },

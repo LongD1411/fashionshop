@@ -1,0 +1,121 @@
+<!-- Edit product -->
+<div class="container">
+    <h3 class="text-center">Chỉnh sửa sản phẩm</h3>
+    <div class="d-flex justify-content-center">
+        <form [formGroup]="productForm">
+            <table class="table-borderless" style="border-spacing: 20px">
+                <tbody>
+                    <tr>
+                        <td style="width: 150px">Ảnh hiện tại</td>
+                        <td><img *ngIf="product?.thumbnail" class="img-thumbnail" style="height: 150px; width: auto"
+                                [src]="product?.thumbnail" />
+                            <div *ngIf="!product?.thumbnail">Chưa có ảnh</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ảnh cập nhật</td>
+                        <td>
+                            <div class="image-upload">
+                                <input class="form-control" type="file" (change)="onFileSelected($event)"
+                                    accept="image/*" />
+                                <div *ngIf="selectedImage" class="mt-2">
+                                    <img class="img-thumbnail" style="height: 150px;" [src]="selectedImage"
+                                        alt="Selected Image" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tên sản phẩm</td>
+                        <td>
+                            <input formControlName="name" class="form-control form-control-custom" style="width: 300px"
+                                type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mô tả</td>
+                        <td>
+                            <input formControlName="description" class="form-control form-control-custom"
+                                style="width: 300px" type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Giá mới</td>
+                        <td>
+                            <input formControlName="price" class="form-control form-control-custom" style="width: 300px"
+                                type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Giá cũ</td>
+                        <td>
+                            <input formControlName="old_price" class="form-control form-control-custom"
+                                style="width: 300px" type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mã sản phẩm</td>
+                        <td>
+                            <input formControlName="sku" class="form-control form-control-custom" style="width: 300px"
+                                type="text" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mã size</td>
+                        <td>
+                            <div formArrayName="product_sizes">
+                                <div *ngFor="let size of productSizes.controls; let i = index" [formGroupName]="i"
+                                    class="form-group d-flex align-items-center">
+                                    <select formControlName="size_id" class="form-control mr-2">
+                                        <option value="">Không được bỏ trống</option>
+                                        <option *ngFor="let size of sizes" [value]="size.id">{{size.sizeName}}</option>
+                                    </select>
+                                    <input formControlName="quantity" class="form-control mr-2" placeholder="Số lượng"
+                                        type="number" />
+                                    <button type="button" class="btn btn-danger"
+                                        (click)="removeProductSize(i)">Remove</button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary mt-2" (click)="addProductSize()">Add
+                                Size</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Mã danh mục</td>
+                        <td>
+                            <select formControlName="category_id" class="form-control form-control-custom"
+                                style="width: 300px;">
+                                <option *ngFor="let category of categories" [value]="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Ảnh chi tiết</td>
+                        <td>
+                            <input type="file" #fileInput (change)="onFilesSelected($event)" accept="image/*" multiple style="display: none" />
+                            <!-- Nút để thêm ảnh -->
+                            <button class="btn btn-primary" type="button" (click)="fileInput.click()">Thêm ảnh</button>
+                         
+                            <!-- Hiển thị các ảnh đã chọn -->
+                            <div formArrayName="detail_images">
+                              <div *ngFor="let image of detailImages.controls; let i = index">
+                                <img [src]="image.value.imageUrl" alt="Ảnh đã chọn" style="max-height: 150px; margin: 5px;">
+                                <button class="btn btn-danger" type="button" (click)="removeImage(i)">Xóa</button>
+                              </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="text-center mt-3">
+                <button class="btn btn-primary ml-2" *ngIf="productId" [disabled]="!productForm.valid">Cập nhật</button>
+                <button class="btn btn-primary ml-2" *ngIf="!productId" [disabled]="!productForm.valid"
+                    (click)="createProduct()">Thêm</button>
+                <button class="btn btn-danger ml-2" type="button">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Edit product end -->

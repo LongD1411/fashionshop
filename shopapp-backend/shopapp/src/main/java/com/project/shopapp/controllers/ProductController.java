@@ -45,10 +45,11 @@ public class ProductController {
 
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProduct(@RequestPart("product") ProductDTO productDTO,
-                                           @RequestPart("thumbnail") MultipartFile file) {
+                                           @RequestPart("thumbnail") MultipartFile file,
+                                           @RequestPart("detail_images")MultipartFile[] files) {
         try {
-            Product newProduct = productService.createProduct(productDTO, file);
-            return ResponseEntity.ok("post request success: " + newProduct);
+            Product newProduct = productService.createProduct(productDTO, file,files);
+            return ResponseEntity.ok(newProduct);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

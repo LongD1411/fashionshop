@@ -10,7 +10,7 @@ import { Size } from '../responses/size.response';
   providedIn: 'root',
 })
 export class ProductService {
-  private apiGetProducts = `${enviroment.apiBaseUrl}/products`;
+  private apiProducts = `${enviroment.apiBaseUrl}/products`;
   private apiGetTop8ProductUpdated = `${enviroment.apiBaseUrl}/products/top8`;
   private apiGetTop4ProductUpdated = `${enviroment.apiBaseUrl}/products/top4`;
   private apiGetAllSize = `${enviroment.apiBaseUrl}/size`;
@@ -26,10 +26,10 @@ export class ProductService {
       .set('limit', limit.toString())
       .set('keyword', keyword.toString())
       .set('categoryId', categoryId.toString());
-    return this.http.get<ProductResponse[]>(this.apiGetProducts, { params });
+    return this.http.get<ProductResponse[]>(this.apiProducts, { params });
   }
   getProduct(id: string): Observable<any> {
-    return this.http.get(`${this.apiGetProducts}/${id}`);
+    return this.http.get(`${this.apiProducts}/${id}`);
   }
   getProductOrders(ids: number[]): Observable<ProductResponse[]> {
     const params = new HttpParams().set('ids', ids.join(','));
@@ -48,5 +48,10 @@ export class ProductService {
   }
   getAllSize(): Observable<Size[]> {
     return this.http.get<Size[]>(this.apiGetAllSize);
+  }
+
+  createProduct(data: FormData): Observable<any> {
+    console.log(data);
+    return this.http.post<any>(this.apiProducts, data);
   }
 }

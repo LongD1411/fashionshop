@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,17 +33,10 @@ public class ProductService implements IProductService {
     private final ProductImageRepository productImageRepository;
     private final SizeRepository sizeRepository;
     private final ProductSizeRepository productSizeRepository;
-//    @Override
-//    public Product createProduct(ProductDTO productDTO) throws Exception {
-//        Category existsCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
-//                () -> new DataNotFoundException("Cannot find categoryID with id:" + productDTO.getCategoryId()));
-//        Product newProduct = Product.toProduct(productDTO);
-//        newProduct.setCategory(existsCategory);
-//        return productRepository.save(newProduct);
-//    }
+
     @Override
     @Transactional
-    public Product createProduct(ProductDTO productDTO, MultipartFile file) throws Exception {
+    public Product createProduct(ProductDTO productDTO, MultipartFile thumbnail, MultipartFile[] files) throws Exception {
         Category existsCategory = categoryRepository.findById(productDTO.getCategoryId()).orElseThrow(
                 () -> new DataNotFoundException("Cannot find categoryID with id:" + productDTO.getCategoryId()));
 
@@ -66,20 +60,40 @@ public class ProductService implements IProductService {
                     .build();
             productSizes.add(productSize);
         }
-        if (!file.isEmpty()) {
+        if (!thumbnail.isEmpty()) {
             // Kiểm tra kích thước file và định dạng
-            ResponseEntity<?> fileCheckResult = ImageUtil.checkImage(file);
+            ResponseEntity<?> fileCheckResult = ImageUtil.checkImage(thumbnail);
             if (fileCheckResult != null) {
                throw  new Exception("Ảnh quá lớn hoặc file không đúng định dạnh");
             }
             // Lưu file và cập nhật thumbnail trong dto
-            String fileName = ImageUtil.storeFile(file);
+            String fileName = ImageUtil.storeFile(thumbnail);
             product.setThumbnail(fileName);
         }
         product.setProductSizes(productSizes);
-        return productRepository.save(product);
+        product = productRepository.save(product);
+        //Luu detail_images
+        if(files != null || files.length>0){
+            for (MultipartFile file : files) {
+                if (file.getSize() == 0) {
+                    continue;
+                }
+                // Kiểm tra kích thước file và định dạng
+                ResponseEntity<?> fileCheckResult = ImageUtil.checkImage(thumbnail);
+                if (fileCheckResult != null) {
+                    throw  new Exception("Ảnh quá lớn hoặc file không đúng định dạnh");
+                }
+                // Lưu file
+                String fileName = ImageUtil.storeFile(file);
+                ProductImage newProductImage = ProductImage.builder()
+                        .product(product)
+                        .imageUrl(fileName)
+                        .build();
+                productImageRepository.save(newProductImage);
+            }
+        }
+        return  product;
     }
-
 
     @Override
     public ProductResponse getProduct(Long id) throws Exception {
@@ -114,9 +128,16 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void deleteProduct(long id) {
-        Optional<Product> optionalProduct = productRepository.findById(id);
-        optionalProduct.ifPresent(product -> productRepository.delete(product));
+    @Transactional
+    public void deleteProduct(long id) throws Exception{
+        Product existsProduct = productRepository.findById(id).orElseThrow(
+                () -> new DataNotFoundException("Cannot find product with id:" + id));
+      List<ProductImage> productImageList = productImageRepository.findByProductId(existsProduct.getId());
+      ImageUtil.deleteImage(existsProduct.getThumbnail());
+      productRepository.delete(existsProduct);
+      for(ProductImage productImage : productImageList){
+          ImageUtil.deleteImage(productImage.getImageUrl());
+      }
     }
 
     @Override

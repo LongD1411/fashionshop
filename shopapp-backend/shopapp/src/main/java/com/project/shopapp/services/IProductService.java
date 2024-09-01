@@ -14,11 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IProductService {
-    Product createProduct(ProductDTO productDTO, MultipartFile file) throws Exception;
+    Product createProduct(ProductDTO productDTO, MultipartFile file,MultipartFile[] files) throws Exception;
     ProductResponse getProduct(Long id) throws Exception;
     Page<ProductResponse> getAllProducts(String keyword, Long categoryId,PageRequest pageRequest);
     Product updateProduct(long id, ProductDTO productDTO) throws Exception;
-    void deleteProduct(long id);
+    void deleteProduct(long id) throws Exception;
     boolean existsByName(String name);
     ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;
     List<ProductResponse> findAllProductsOrder(List<Long> ids);

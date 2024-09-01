@@ -1,0 +1,79 @@
+<!-- category home -->
+<div class="container">
+    <div style="display: flex; justify-content: space-between">
+        <h3>Danh sách sản phẩm</h3>
+        <div style="cursor: pointer" (click)="createProduct()">
+            <i class="fa-solid fa-plus"></i>
+            <span style="margin-left: 5px">Thêm</span>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr style="text-align: center">
+                <th scope="col">#</th>
+                <th scope="col">Ảnh sản phẩm</th>
+                <th scope="col">Tên sản phẩm</th>
+                <th scope="col">Mô tả</th>
+                <th scope="col">Giá mới</th>
+                <th scope="col">Giá cũ</th>
+                <th scope="col">Tùy chọn</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let product of products, let i = index">
+                <th scope="row">{{i+1}}</th>
+                <td>
+                    <img *ngIf="product.thumbnail" style="margin-left: 20px; height: 150px" [src]="product.thumbnail"/>
+                    <div *ngIf="!product.thumbnail" style="text-align: center">Chưa có ảnh</div>
+                </td>
+                <td>
+                    <div style="text-align: left; margin-left: 40px">{{product.name}}</div>
+                </td>
+                <td>
+                    <div style="text-align: left; margin-left: 40px">{{product.description}}</div>
+                </td>
+                <td>
+                    <div style="text-align: left; margin-left: 40px">{{product.price}}</div>
+                </td>
+                <td>
+                    <div style="text-align: left; margin-left: 40px">{{product.old_price}}</div>
+                </td>
+                <td>
+                    <div style="display: flex; justify-content: center; align-items: center">
+                        <input class="btn btn-primary btn-sm mr-1" type="button" value="Sửa" />
+                        <input class="btn btn-danger btn-sm" type="button" value="Xóa" />
+                    </div>
+                </td>
+
+                <td>
+                    <input style="margin-left: 20px" type="checkbox" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <ng-container *ngIf="products.length >= 1 ">
+        <div class="col-12 pb-1">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-3">
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === 1}">
+                        <a class="page-link" (click)="changePage(currentPage - 1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                    </li>
+                    <li *ngFor="let page of generateVisiblePageArray(currentPage, totalsPages)"
+                        class="page-item" [ngClass]="{'active': page === currentPage}">
+                        <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+                    </li>
+                    <li class="page-item" [ngClass]="{'disabled': currentPage === totalsPages}">
+                        <a class="page-link" (click)="changePage(currentPage + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </ng-container>
+</div>
+<!-- category home end -->
