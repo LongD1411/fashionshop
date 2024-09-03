@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../service/product.service';
 import { SweetAlertService } from '../../service/sweet-alert.service';
 import {
@@ -17,6 +17,7 @@ import { CategoryResponse } from '../../responses/category/category.respones';
 import { forkJoin } from 'rxjs';
 import { SizeService } from '../../service/size.service';
 import { Size } from '../../responses/size.response';
+import { enviroment } from '../../enviroments/enviroment';
 
 @Component({
   selector: 'app-product.edit',
@@ -38,7 +39,8 @@ export class ProductEditComponent implements OnInit {
     private alert: SweetAlertService,
     private fb: FormBuilder,
     private categoryService: CategoryService,
-    private sizeService: SizeService
+    private sizeService: SizeService,
+    private router: Router
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -48,7 +50,7 @@ export class ProductEditComponent implements OnInit {
       category_id: ['', Validators.required],
       sku: ['', Validators.required],
       product_sizes: this.fb.array([]),
-      thumbnail: [null, Validators.required],
+      thumbnail: [null],
       detail_images: this.fb.array([]),
     });
   }
@@ -64,6 +66,43 @@ export class ProductEditComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((param) => {
       this.productId = param['id'];
     });
+    if (this.productId) {
+      this.productService.getProduct(this.productId).subscribe({
+        next: (response) => {
+          this.product = response;
+          if (this.product?.thumbnail) {
+            this.product.thumbnail = `${enviroment.apiImage}/${this.product.thumbnail}`;
+          }
+          if (this.product!.product_images.length > 0) {
+            this.product?.product_images.map((item) => {
+              item.thumbnail_url = `${enviroment.apiImage}/${item.thumbnail_url}`;
+            });
+          }
+          this.product?.sizes.map((item) => {
+            const sizeGroup = this.fb.group({
+              size_id: item.id,
+              quantity: item.quantity,
+            });
+            this.productSizes.push(sizeGroup);
+          });
+          this.product?.product_images.map((item) => {
+            const detail_image = this.fb.group({
+              imageUrl: item.thumbnail_url,
+              id: item.id,
+            });
+            this.detailImages.push(detail_image);
+          });
+          this.productForm.patchValue({
+            name: this.product?.name,
+            price: this.product?.price,
+            old_price: this.product?.old_price,
+            description: this.product?.description,
+            category_id: this.product?.category_id,
+            sku: this.product?.sku,
+          });
+        },
+      });
+    }
 
     forkJoin([
       this.categoryService.getCategories(),
@@ -134,9 +173,9 @@ export class ProductEditComponent implements OnInit {
       category_id: this.productForm.get('category_id')?.value,
     };
     const thumbnail = this.productForm.get('thumbnail')?.value;
-    const detail_images = this.detailImages.controls.map((item) => {
-      return item.value.file;
-    });
+    const detail_images = this.detailImages.controls
+      .map((item) => item.value.file)
+      .filter((file) => file !== undefined);
     const formData = new FormData();
     formData.append(
       'product',
@@ -150,11 +189,66 @@ export class ProductEditComponent implements OnInit {
     });
     this.productService.createProduct(formData).subscribe({
       next: (response) => {
-        console.log(response);
+        this.router.navigate(['quan-ly/product']);
+        this.alert.showSuccess(`Thêm thành công sản phẩm`);
       },
       error: (error) => {
         console.log(error);
       },
     });
+  }
+  updateProduct() {
+    const detailImageIds = this.detailImages.controls
+      .map((item) => item.value.id)
+      .filter((ids) => ids !== undefined);
+    const productDTO = {
+      id: this.productId,
+      name: this.productForm.get('name')?.value,
+      description: this.productForm.get('description')?.value,
+      price: this.productForm.get('price')?.value,
+      old_price: this.productForm.get('old_price')?.value,
+      product_sizes: this.productForm.get('product_sizes')?.value,
+      sku: this.productForm.get('sku')?.value,
+      category_id: this.productForm.get('category_id')?.value,
+      detail_image_ids: detailImageIds,
+    };
+    console.log(productDTO);
+    const thumbnail = this.productForm.get('thumbnail')?.value;
+    console.log(thumbnail);
+    const detail_images = this.detailImages.controls
+      .map((item) => item.value.file)
+      .filter((file) => file !== undefined);
+
+    console.log(detail_images);
+    const formData = new FormData();
+    formData.append(
+      'product',
+      new Blob([JSON.stringify(productDTO)], { type: 'application/json' })
+    );
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail, thumbnail.name);
+    }
+    detail_images.forEach((file, index) => {
+      formData.append('detail_images', file, `detail_images${index}`);
+    });
+    this.productService.updateProduct(formData).subscribe({
+      next: (response) => {
+        this.router.navigate(['quan-ly/product/edit'], {
+          queryParams: { id: this.productId },
+        });
+        this.alert.showSuccess('Cập nhật thành công').then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
+      },
+      error: (response) => {
+        console.log(response);
+        this.alert.showError('Không cập nhật được');
+      },
+    });
+  }
+  reload() {
+    window.location.reload();
   }
 }

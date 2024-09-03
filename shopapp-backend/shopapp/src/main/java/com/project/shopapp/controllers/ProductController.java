@@ -5,6 +5,7 @@ import com.project.shopapp.dtos.ProductDTO;
 import com.project.shopapp.dtos.ProductImageDTO;
 import com.project.shopapp.entities.Product;
 import com.project.shopapp.entities.ProductImage;
+import com.project.shopapp.respone.Message;
 import com.project.shopapp.respone.ProductListRespone;
 import com.project.shopapp.respone.ProductResponse;
 import com.project.shopapp.services.IProductService;
@@ -54,42 +55,6 @@ public class ProductController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    @PostMapping(value = "uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadImages(@Valid @PathVariable("id") Long productId,
-                                          @ModelAttribute("files") List<MultipartFile> files) {
-        try {
-            ProductResponse existingProduct = productService.getProduct(productId);
-            files = files == null ? new ArrayList<MultipartFile>() : files;
-            if (files.size() > MAXIMUM_IMAGES) {
-                return ResponseEntity.badRequest().body("You can only upload maximum 5 images");
-            }
-            List<ProductImage> listProductImages = new ArrayList<>();
-            for (MultipartFile file : files) {
-
-                if (file.getSize() == 0) {
-                    continue;
-                }
-                // Kiểm tra kích thước file và định dạng
-                if (file.getSize() > 10 * 1024 * 1024) {
-                    return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body("File is  too large! Maximum size is 10mb");
-                }
-                String contentType = file.getContentType();
-                if (contentType == null || !contentType.startsWith("image/")) {
-                    return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("File must be an image");
-                }
-                // Lưu file và cập nhật  thumbnail trong dto
-                String fileName = ImageUtil.storeFile(file);
-                ProductImage productImage = productService.createProductImage(existingProduct.getId(), ProductImageDTO.builder()
-                        .imageUrl(fileName)
-                        .build());
-                listProductImages.add(productImage);
-            }
-            return ResponseEntity.ok().body(listProductImages);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("")// http://localhost:8088/api/v1/categories?page=1&limit=1
         public ResponseEntity<ProductListRespone> getProducts(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                                               @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
@@ -117,8 +82,8 @@ public class ProductController {
         return ResponseEntity.ok().body(topProductArrived);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getProduct(@PathVariable Long id) {
+    @GetMapping("/product")
+    public ResponseEntity<?> getProduct(@RequestParam("id") Long id) {
         try {
             ProductResponse existingProduct = productService.getProduct(id);
             return ResponseEntity.ok().body(existingProduct);
@@ -141,24 +106,28 @@ public class ProductController {
            return ResponseEntity.badRequest().body("aaa");
        }
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    @DeleteMapping("")
+    public ResponseEntity<?> deleteProduct(@RequestParam("id") Long id) {
         try {
             productService.deleteProduct(id);
-            return ResponseEntity.ok("Delete product " + id + " successfully");
+            return ResponseEntity.ok(Message.builder().message("Xóa thành công sản phẩm có id: " + id).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@Valid @PathVariable Long id,
-                                           @RequestBody ProductDTO productDTO){
+    @PutMapping(value = "",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProduct(@RequestPart("product") ProductDTO productDTO,
+                                           @RequestPart(value = "thumbnail" ,required = false) MultipartFile thumbnail,
+                                           @RequestPart(value = "detail_images", required = false)MultipartFile[] files){
         try{
-            Product updatedProduct = productService.updateProduct(id,productDTO);
+            if(productDTO.getId()==null){
+                return  ResponseEntity.badRequest().body(Message.builder().message("Không tồn tại sản phẩm").build());
+            }
+            Product updatedProduct = productService.updateProduct(productDTO.getId(),productDTO,thumbnail,files);
             return ResponseEntity.ok().body(updatedProduct);
         }catch (Exception e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
+            return  ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
         }
     }
 

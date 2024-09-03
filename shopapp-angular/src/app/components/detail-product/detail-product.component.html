@@ -18,8 +18,11 @@
       <div class="col-lg-5 pb-5">
           <div id="product-carousel" class="carousel slide" data-ride="carousel">
               <div class="carousel-inner border">
-                <div class="carousel-item active">
-                    <img class="w-100 h-100" [src]="product?.thumbnail" alt="Image">
+                <div class="carousel-item active" >
+                    <img class="w-100 h-100" [src]="product.thumbnail" alt="Image">
+                </div>
+                <div class="carousel-item " *ngFor="let product_image of product.product_images">
+                    <img class="w-100 h-100" [src]="product_image.thumbnail_url" alt="Image">
                 </div>
                   <!-- <div class="carousel-item active">
                       <img class="w-100 h-100" src="img/product-1.jpg" alt="Image">
@@ -62,7 +65,7 @@
               <form>
                   <div class="custom-control custom-radio custom-control-inline" *ngFor="let size of this.product?.sizes">
                       <input type="radio" class="custom-control-input" [id]="size.id" name="size"  (change)="onSizeChange(size.id)">
-                      <label class="custom-control-label" [for]="size.id">{{size.sizeName}}</label>
+                      <label class="custom-control-label" [for]="size.id">{{size.size_name}}</label>
                   </div>
               </form>
           </div>

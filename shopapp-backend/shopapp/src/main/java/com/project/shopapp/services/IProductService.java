@@ -17,7 +17,7 @@ public interface IProductService {
     Product createProduct(ProductDTO productDTO, MultipartFile file,MultipartFile[] files) throws Exception;
     ProductResponse getProduct(Long id) throws Exception;
     Page<ProductResponse> getAllProducts(String keyword, Long categoryId,PageRequest pageRequest);
-    Product updateProduct(long id, ProductDTO productDTO) throws Exception;
+    Product updateProduct(long id, ProductDTO productDTO,MultipartFile thumbnail,MultipartFile[] detail_images) throws Exception;
     void deleteProduct(long id) throws Exception;
     boolean existsByName(String name);
     ProductImage createProductImage(Long productId, ProductImageDTO productImageDTO) throws Exception;

@@ -10,7 +10,8 @@
     <table class="table">
         <thead>
             <tr style="text-align: center">
-                <th scope="col">#</th>
+                <th scope="col">STT</th>
+                <th scope="col">id</th>
                 <th scope="col">Ảnh sản phẩm</th>
                 <th scope="col">Tên sản phẩm</th>
                 <th scope="col">Mô tả</th>
@@ -22,6 +23,7 @@
         <tbody>
             <tr *ngFor="let product of products, let i = index">
                 <th scope="row">{{i+1}}</th>
+                <th scope="row">{{product.id}}</th>
                 <td>
                     <img *ngIf="product.thumbnail" style="margin-left: 20px; height: 150px" [src]="product.thumbnail"/>
                     <div *ngIf="!product.thumbnail" style="text-align: center">Chưa có ảnh</div>
@@ -40,8 +42,8 @@
                 </td>
                 <td>
                     <div style="display: flex; justify-content: center; align-items: center">
-                        <input class="btn btn-primary btn-sm mr-1" type="button" value="Sửa" />
-                        <input class="btn btn-danger btn-sm" type="button" value="Xóa" />
+                        <input class="btn btn-primary btn-sm mr-1" type="button" (click)="updateProduct(product.id)" value="Sửa" />
+                        <input class="btn btn-danger btn-sm" type="button" (click)="deleteProduct(product.id)" value="Xóa" />
                     </div>
                 </td>
 

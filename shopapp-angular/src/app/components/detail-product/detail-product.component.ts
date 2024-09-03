@@ -15,8 +15,8 @@ import { SweetAlertService } from '../../service/sweet-alert.service';
   templateUrl: './detail-product.component.html',
 })
 export class DetailProductComponent implements OnInit {
-  productId: string | null = null;
-  product: ProductResponse | null = null;
+  productId: number | undefined;
+  product: any | null = null;
   quantity: number = 1;
   top4ProductUpdated: ProductResponse[] = [];
   selectedSizeId: number | null = null;
@@ -29,8 +29,8 @@ export class DetailProductComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     window.scroll(0, 0);
-    this.route.paramMap.subscribe((params) => {
-      this.productId = params.get('id');
+    this.route.queryParams.subscribe((param) => {
+      this.productId = param['id'];
     });
     if (this.productId) {
       this.productService.getProduct(this.productId).subscribe({
@@ -39,6 +39,13 @@ export class DetailProductComponent implements OnInit {
           if (this.product?.thumbnail) {
             this.product.thumbnail = `${enviroment.apiImage}/${this.product?.thumbnail}`;
           }
+          if (this.product.product_images) {
+            this.product.product_images.map((item: any) => {
+              item.thumbnail_url = `${enviroment.apiImage}/${item.thumbnail_url}`;
+              return item;
+            });
+          }
+          console.log(this.product)
           // if (this.product?.sizes) {
           //   this.sortSizes(this.product.sizes);
           // }
@@ -86,10 +93,9 @@ export class DetailProductComponent implements OnInit {
       .navigate(['/chi-tiet-san-pham', productId])
       .then(() => window.scroll(0, 0));
   }
-  addToCart(id: string) {
-    const ID = parseInt(id);
-    if (ID) {
-      this.cartService.setCart(ID, this.selectedSizeId!, 1);
+  addToCart(id: number) {
+    if (id) {
+      this.cartService.setCart(id, this.selectedSizeId!, 1);
     }
     this.alert.showSuccess('Thêm thành công');
   }

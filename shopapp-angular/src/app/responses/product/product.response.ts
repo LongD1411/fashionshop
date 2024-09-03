@@ -13,4 +13,5 @@ export interface ProductResponse {
   category_id: number;
   product_images: ProductImageResponse[];
   sizes :Size[];
+  sku:string;
 }

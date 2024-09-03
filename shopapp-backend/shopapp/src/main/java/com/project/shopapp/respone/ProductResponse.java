@@ -25,17 +25,20 @@ public class ProductResponse extends BaseResponse {
     private float oldPrice;
     private String thumbnail;
     private String description;
+    private String sku;
     @JsonProperty("product_images")
     private List<ProductImageResponse> productImages;
-    private List<Size> sizes;
-    public static ProductResponse toProductRespone(Product product ,List<ProductImageResponse> productImagesResponse, List<Size> sizes){
+    private List<SizeResponse> sizes;
+    public static ProductResponse toProductRespone(Product product ,List<ProductImageResponse> productImagesResponse, List<SizeResponse> sizes){
         ProductResponse productResponse = ProductResponse.builder()
                 .name(product.getName())
                 .thumbnail(product.getThumbnail())
                 .price(product.getPrice())
+                .oldPrice(product.getOldPrice())
                 .categoryId(product.getCategory().getId())
                 .description(product.getDescription())
                 .id(product.getId())
+                .sku(product.getSku())
                 .productImages(productImagesResponse)
                 .sizes(sizes)
                 .build();

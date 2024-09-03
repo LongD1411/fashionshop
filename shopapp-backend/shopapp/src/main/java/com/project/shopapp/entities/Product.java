@@ -1,5 +1,6 @@
 package com.project.shopapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.shopapp.dtos.ProductDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -37,17 +38,17 @@ public class Product extends BaseEntity {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<ProductSize> productSizes;
 
     private String sku;// mã sản phẩm
 
-    public static Product toProduct(ProductDTO productDTO) {
-        Product newProduct = Product.builder()
-                .name(productDTO.getName())
-                .price(productDTO.getPrice())
-                .description(productDTO.getDescription())
-                .sku(productDTO.getSku())
-                .build();
-        return newProduct;
+    public static Product toProduct(Product product,ProductDTO productDTO) {
+       product.setName(productDTO.getName());
+       product.setOldPrice(productDTO.getOldPrice());
+       product.setPrice(productDTO.getPrice());
+       product.setDescription(productDTO.getDescription());
+       return  product;
     }
+
 }

@@ -28,8 +28,9 @@ export class ProductService {
       .set('categoryId', categoryId.toString());
     return this.http.get<ProductResponse[]>(this.apiProducts, { params });
   }
-  getProduct(id: string): Observable<any> {
-    return this.http.get(`${this.apiProducts}/${id}`);
+  getProduct(id: number): Observable<any> {
+    const params = new HttpParams().set('id', id);
+    return this.http.get(`${this.apiProducts}/product`, { params: params });
   }
   getProductOrders(ids: number[]): Observable<ProductResponse[]> {
     const params = new HttpParams().set('ids', ids.join(','));
@@ -51,7 +52,13 @@ export class ProductService {
   }
 
   createProduct(data: FormData): Observable<any> {
-    console.log(data);
     return this.http.post<any>(this.apiProducts, data);
+  }
+  deleteProduct(id: number): Observable<any> {
+    const params = new HttpParams().set('id', id);
+    return this.http.delete<any>(this.apiProducts, { params: params });
+  }
+  updateProduct(data: FormData): Observable<any> {
+    return this.http.put<any>(this.apiProducts, data);
   }
 }

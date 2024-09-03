@@ -18,6 +18,8 @@ import { CategoryComponent } from './admin/category/category.component';
 import { CategoryEditComponent } from './admin/category/category.edit.component';
 import { AdminProductComponent } from './admin/product/product.component';
 import { ProductEditComponent } from './admin/product/product.edit.component';
+import { UserComponent } from './admin/user/user.component';
+import { UserEditComponent } from './admin/user/user.edit.component';
 
 export const routes: Routes = [
   {
@@ -49,7 +51,7 @@ export const routes: Routes = [
     component: LoginComponent,
   },
   {
-    path: 'chi-tiet-san-pham/:id',
+    path: 'chi-tiet-san-pham',
     component: DetailProductComponent,
   },
   {
@@ -92,6 +94,14 @@ export const routes: Routes = [
       {
         path: 'product/edit',
         component: ProductEditComponent,
+      },
+      {
+        path: 'user',
+        component: UserComponent,
+      },
+      {
+        path: 'user/edit',
+        component: UserEditComponent,
       },
     ],
   },

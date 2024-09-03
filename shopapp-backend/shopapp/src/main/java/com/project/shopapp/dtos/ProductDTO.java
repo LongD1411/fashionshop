@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
+    private Long id;
+
     @NotBlank(message = "Tittle is required")
     @Size(min = 3, max = 200, message = "Tittle must be between 3 and 200 characters")
     private String name;
@@ -31,7 +33,8 @@ public class ProductDTO {
     @JsonProperty("category_id")
     private Long categoryId;
 
-
+    @JsonProperty("detail_image_ids")
+    private  Long[] detailProductImageIds;
     @JsonProperty("sku")
     @NotBlank(message = "Sku is required")
     private String sku;

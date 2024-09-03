@@ -110,10 +110,10 @@
                 </tbody>
             </table>
             <div class="text-center mt-3">
-                <button class="btn btn-primary ml-2" *ngIf="productId" [disabled]="!productForm.valid">Cập nhật</button>
+                <button class="btn btn-primary ml-2" *ngIf="productId" [disabled]="!productForm.valid" (click)="updateProduct()">Cập nhật</button>
                 <button class="btn btn-primary ml-2" *ngIf="!productId" [disabled]="!productForm.valid"
                     (click)="createProduct()">Thêm</button>
-                <button class="btn btn-danger ml-2" type="button">Hủy</button>
+                <button class="btn btn-danger ml-2" type="button" (click)="reload()">Hủy</button>
             </div>
         </form>
     </div>

@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                             .requestMatchers(String.format("%s/banner", apiPrefix)).hasAnyRole("ADMIN")
                             .requestMatchers(DELETE, String.format("%s/size/delete", apiPrefix)).hasAnyRole("ADMIN")
                             .requestMatchers(DELETE, String.format("%s/products/**", apiPrefix)).hasAnyRole("ADMIN")
-                            .requestMatchers(PUT, String.format("%s/products/**", apiPrefix)).hasAnyRole("ADMIN")
+                            .requestMatchers(PUT, String.format("%s/products", apiPrefix)).hasAnyRole("ADMIN")
                             .requestMatchers(POST, String.format("%s/products/**", apiPrefix)).hasAnyRole("ADMIN")
                             .requestMatchers(DELETE, String.format("%s/categories/**", apiPrefix)).hasAnyRole("ADMIN")
                             .requestMatchers(PUT, String.format("%s/categories", apiPrefix)).hasAnyRole("ADMIN")

@@ -13,6 +13,8 @@ import com.project.shopapp.utils.MessageKey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -80,7 +82,18 @@ public class UserControlller {
             }
             return  ResponseEntity.badRequest().body(Message.builder().message("You need to login").build());
         }catch (Exception e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
+            return    ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
         }
+    }
+    @GetMapping("")
+    public ResponseEntity<?> getAllUsers(@RequestParam(value = "keyword", required = false) String keyword,
+                                         @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                         @RequestParam(value = "limit", required = false, defaultValue = "10") int limit){
+        try{
+            PageRequest pageRequest = PageRequest.of(page-1,limit, Sort.by("createAt").descending());
+        }catch (Exception e){
+            ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
+        }
+        return null;
     }
 }

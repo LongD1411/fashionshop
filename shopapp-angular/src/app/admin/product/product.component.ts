@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ProductResponse } from '../../responses/product/product.response';
 import { ProductService } from '../../service/product.service';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { enviroment } from '../../enviroments/enviroment';
+import { SweetAlertService } from '../../service/sweet-alert.service';
 
 @Component({
   selector: 'app-product',
@@ -21,7 +22,11 @@ export class AdminProductComponent implements OnInit {
   visiblePages: number[] = [];
   keyword: string = '';
   categoryId: number = 0;
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private alert: SweetAlertService
+  ) {}
   ngOnInit(): void {
     this.getProducts(
       this.currentPage,
@@ -86,5 +91,27 @@ export class AdminProductComponent implements OnInit {
   }
   createProduct() {
     this.router.navigate(['quan-ly/product/edit']);
+  }
+  updateProduct(id: number) {
+    this.router.navigate(['quan-ly/product/edit'], { queryParams: { id } });
+  }
+  deleteProduct(id: number) {
+    this.alert.showConfirm('Cảnh báo', 'Chắc chắn xóa?').then((result) => {
+      if (result.isConfirmed) {
+        this.productService.deleteProduct(id).subscribe({
+          next: (response) => {
+            this.alert.showSuccess(response.message).then((result) => {
+              if (result.isConfirmed) {
+                window.location.reload();
+              }
+            });
+          },
+          error: (response) => {
+            this.alert.showError(response.message);
+          },
+          complete() {},
+        });
+      }
+    });
   }
 }

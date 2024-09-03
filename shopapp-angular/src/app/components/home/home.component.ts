@@ -72,7 +72,7 @@ export class HomeComponent {
     });
   }
   viewProductDetails(productId: number) {
-    this.router.navigate(['/chi-tiet-san-pham', productId]);
+    this.router.navigate(['/chi-tiet-san-pham'],{queryParams:{'id':productId}});
   }
   logout() {
     this.userService.logout();
