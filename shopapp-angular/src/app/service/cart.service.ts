@@ -53,7 +53,7 @@ export class CartService {
   }
   quantityUp(id: number) {
     this.cart.forEach((item) => {
-      if (item.product_id === id) {
+      if (item.product_id == id) {
         item.quantity += 1;
       }
     });
@@ -62,7 +62,7 @@ export class CartService {
 
   quantityDown(id: number) {
     this.cart.forEach((item) => {
-      if (item.product_id === id && item.quantity >= 2) {
+      if (item.product_id == id && item.quantity >= 2) {
         item.quantity -= 1;
       }
     });

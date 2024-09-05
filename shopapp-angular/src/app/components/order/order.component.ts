@@ -22,7 +22,7 @@ import { Router, RouterLink } from '@angular/router';
 @Component({
   selector: 'app-order',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './order.component.html',
 })
 export class OrderComponent implements OnInit {
@@ -56,7 +56,7 @@ export class OrderComponent implements OnInit {
             this.size = sizesResponse;
             this.localProduct = this.cart.map((cartLocal) => {
               const product = productsResponse.find(
-                (productAPI) => productAPI.id === cartLocal.product_id
+                (productAPI) => productAPI.id == cartLocal.product_id
               );
               if (product) {
                 product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
@@ -67,11 +67,11 @@ export class OrderComponent implements OnInit {
               const quantity = cartLocal.quantity;
               return {
                 product: product,
-                size:size,
+                size: size,
                 quantity: quantity,
               };
             });
-            
+            console.log(this.localProduct, sizesResponse);
           },
           error: (error) => {
             console.log(error);

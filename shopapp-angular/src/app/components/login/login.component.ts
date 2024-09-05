@@ -51,8 +51,7 @@ export class LoginComponent {
           this.alert.showSuccess('Đăng nhập thành công');
         },
         error: (error: any) => {
-          this.registrationMessage =
-            error.error.message || 'Something wrong :(';
+          this.alert.showError(error.error.message);
           this.isError = true;
         },
         complete: () => {},

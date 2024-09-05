@@ -9,6 +9,7 @@ import { enviroment } from '../enviroments/enviroment';
 })
 export class OrderService {
   private apiOrder = `${enviroment.apiBaseUrl}/orders`;
+  private apiAllOrder = `${enviroment.apiBaseUrl}/orders/user`;
   private apiOrderDetail = `${enviroment.apiBaseUrl}/orders`;
   private apiConfig = {
     headers: this.createHeader(),
@@ -30,7 +31,11 @@ export class OrderService {
       headers: this.apiConfig.headers,
     });
   }
-  getOrderSuccess(orderId: string):Observable<any>{
-    return this.http.get(`${this.apiOrder}/${orderId}`)
+  getOrderSuccess(orderId: string): Observable<any> {
+    return this.http.get(`${this.apiOrder}/${orderId}`);
+  }
+  getAllOrder(userId: number): Observable<any> {
+    const param = new HttpParams().set('id', userId.toString());
+    return this.http.get(this.apiAllOrder, { params: param });
   }
 }

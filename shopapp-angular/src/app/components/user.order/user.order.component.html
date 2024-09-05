@@ -1,0 +1,20 @@
+<!-- Page Header Start -->
+<div class="container-fluid bg-secondary mb-5">
+    <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 300px">
+      <h1 class="font-weight-semi-bold text-uppercase mb-3">Danh sách đơn hàng</h1>
+      <div class="d-inline-flex">
+        <p class="m-0"><a routerLink="/">Trang chủ</a></p>
+        <p class="m-0 px-2">-</p>
+        <p class="m-0">Đặt hàng</p>
+      </div>
+    </div>
+  </div>
+  <!-- Page Header End -->
+<div class="container d-flex flex-column justify-content-center">
+    <div class="border  col-12 d-flex justify-content-between mb-3"  *ngFor="let order of oders" style="font-size: 25px; padding: 25px; cursor: pointer;" (click)="orderDetail(order.id)">
+        <div>ID: {{order.id}}</div>
+        <div>Người đặt: {{order.full_name}}</div>
+        <div>Số điện thoại: {{order.phone_number}}</div>
+        <div>Thanh toán: {{order.total_money}}</div>
+    </div>
+</div>

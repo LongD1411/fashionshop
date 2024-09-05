@@ -91,7 +91,7 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
       this.cart = items;
       this.productIds = this.cart.map((item) => item.product_id);
       // Lấy thông tin kích thước và sản phẩm đồng thời
-      if (this.cart.length === 0) {
+      if (this.cart.length == 0) {
         this.localProduct = [];
       } else {
         forkJoin([
@@ -102,13 +102,13 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
             this.size = sizesResponse;
             this.localProduct = this.cart.map((cartLocal) => {
               const product = productsResponse.find(
-                (productAPI) => productAPI.id === cartLocal.product_id
+                (productAPI) => productAPI.id == cartLocal.product_id
               );
               if (product) {
                 product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
               }
               const size = this.size.find(
-                (sizeAPI) => sizeAPI.id === cartLocal.size_id
+                (sizeAPI) => sizeAPI.id == cartLocal.size_id
               );
               const quantity = cartLocal.quantity;
               return {

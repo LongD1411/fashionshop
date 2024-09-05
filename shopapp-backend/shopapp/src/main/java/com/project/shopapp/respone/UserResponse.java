@@ -26,5 +26,6 @@ public class UserResponse {
     private int googleAccountId;
     @JsonProperty("facebook_account_id")
     private int facebookAccountId;
-
+    @JsonProperty("is_active")
+    private boolean isActive;
 }

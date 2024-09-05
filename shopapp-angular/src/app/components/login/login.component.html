@@ -1,8 +1,4 @@
-<h3
-  (click)="homeNavigate()"
-  class="nav-link"
-  style="margin-top: 10px; margin-left: 10px; cursor: pointer"
->
+<h3 (click)="homeNavigate()" class="nav-link" style="margin-top: 10px; margin-left: 10px; cursor: pointer">
   <i class="fa-solid fa-arrow-left"></i> Home
 </h3>
 <div class="container">
@@ -13,12 +9,7 @@
           <h2 class="login-header">Đăng nhập</h2>
           <div class="form-group">
             <label for="phone">Số điện thoại</label>
-            <input
-              type="text"
-              class="form-control"
-              id="phone"
-              formControlName="phone"
-              [ngClass]="{
+            <input type="text" class="form-control" id="phone" formControlName="phone" [ngClass]="{
                 'is-valid':
                   loginForm.get('phone')?.valid &&
                   (loginForm.get('phone')?.touched ||
@@ -27,17 +18,11 @@
                   !loginForm.get('phone')?.valid &&
                   (loginForm.get('phone')?.touched ||
                     loginForm.get('phone')?.dirty)
-              }"
-            />
+              }" />
           </div>
           <div class="form-group password-field">
             <label for="password">Mật khẩu</label>
-            <input
-              type="password"
-              class="form-control"
-              id="password"
-              formControlName="password"
-              [ngClass]="{
+            <input type="password" class="form-control" id="password" formControlName="password" [ngClass]="{
                 'is-valid':
                   loginForm.get('password')?.valid &&
                   (loginForm.get('password')?.touched ||
@@ -46,22 +31,16 @@
                   !loginForm.get('password')?.valid &&
                   (loginForm.get('password')?.touched ||
                     loginForm.get('password')?.dirty)
-              }"
-            />
+              }" />
           </div>
-          <div
-            *ngIf="registrationMessage"
-            [ngClass]="{ error: isError, success: !isError }"
-          >
+          <div *ngIf="registrationMessage" [ngClass]="{ error: isError, success: !isError }">
             {{ registrationMessage }}
           </div>
           <div class="form-group">
             <div class="form-check checkbox-text">
               <span style="display: flex">
                 <input type="checkbox" class="form-check-input" id="remember" />
-                <label class="form-check-label text-start" for="remember"
-                  >Ghi nhớ đăng nhập?</label
-                >
+                <label class="form-check-label text-start" for="remember">Ghi nhớ đăng nhập?</label>
               </span>
               <a class="register-link">Quên mật khẩu ?</a>
             </div>
@@ -70,11 +49,7 @@
           <div class="divider"></div>
           <p class="text-center">
             Bạn chưa có tài khoản ?
-            <span
-              ><a routerLink="/dang-ki" class="register-link"
-                >Tạo tài khoản</a
-              ></span
-            >
+            <span><a routerLink="/dang-ki" class="register-link">Tạo tài khoản</a></span>
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { ProductService } from '../../service/product.service';
 import { Router } from '@angular/router';
 import { enviroment } from '../../enviroments/enviroment';
 import { SweetAlertService } from '../../service/sweet-alert.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-product',

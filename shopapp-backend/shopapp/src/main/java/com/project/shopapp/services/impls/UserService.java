@@ -14,6 +14,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,6 +77,9 @@ public class UserService implements IUserService {
                 throw new BadCredentialsException("Wrong phone number or password");
             }
         }
+        if(!existingUser.isActive()){
+            return "BanAccount";
+        }
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 phoneNumber, password,existingUser.getAuthorities()
         );
@@ -123,5 +128,28 @@ public class UserService implements IUserService {
         User user = userRepository.findByPhoneNumber(phoneNumber).orElseThrow(
                 ()-> new UsernameNotFoundException("The phone number does not exist " + phoneNumber));
         return (user.getRole().getName().equals("USER"));
+    }
+
+    @Override
+    public Page<UserResponse> getAllUsers(String keyword, PageRequest pageRequest) {
+      return  userRepository.getAllUsers(pageRequest,keyword).map((user) ->UserResponse.builder()
+              .fullName(user.getFullName())
+              .phoneNumber(user.getPhoneNumber())
+              .isActive(user.isActive())
+              .userID(user.getId()).build());
+    }
+
+    @Override
+    public void banUser(Long id) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Không tìm thấy user có id: " + id));
+        user.setActive(false);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void unbanUser(Long id) throws Exception {
+        User user = userRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Không tìm thấy user có id: " + id));
+        user.setActive(true);
+        userRepository.save(user);
     }
 }

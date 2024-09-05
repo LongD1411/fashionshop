@@ -24,7 +24,11 @@ export class ProductComponent implements OnInit {
   keyword: string = '';
   categoryId: number = 0;
   products: ProductResponse[] = [];
-  constructor(private productService: ProductService, private router: Router, private cartService: CartService) {}
+  constructor(
+    private productService: ProductService,
+    private router: Router,
+    private cartService: CartService
+  ) {}
   ngOnInit(): void {
     this.getProducts(
       this.currentPage,
@@ -106,7 +110,6 @@ export class ProductComponent implements OnInit {
   onKeywordChange(event: Event) {
     const element = event.target as HTMLSelectElement;
     this.keyword = element.value;
-    console.log(this.keyword);
   }
   viewProductDetails(productId: number) {
     this.router.navigate(['/chi-tiet-san-pham', productId]);

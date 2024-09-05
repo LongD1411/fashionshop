@@ -56,7 +56,7 @@
                       cá nhân</a>
                   </li>
                   <li class="li-user-nav">
-                    <a style="text-decoration: none; color: rgb(108, 108, 108)" routerLink="/">Đơn hàng đã đặt</a>
+                    <a style="text-decoration: none; color: rgb(108, 108, 108)" routerLink="thong-tin-ca-nhan/thong-tin-don-hang" [queryParams]="{id:userResponse.user_id}">Đơn hàng đã đặt</a>
                   </li>
                   <li class="li-user-nav">
                     <a style="text-decoration: none; color: rgb(108, 108, 108)" (click)="logout()">Đăng xuất</a>

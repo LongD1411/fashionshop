@@ -36,8 +36,8 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/user/{user_id}")
-    public ResponseEntity<?> getOrders(@Valid @PathVariable("user_id") Long userId) {
+    @GetMapping("/user")
+    public ResponseEntity<?> getOrders(@RequestParam("id") Long userId) {
         try {
             List<OrderResponese> orders = orderService.findByUserId(userId);
             return ResponseEntity.ok(orders);

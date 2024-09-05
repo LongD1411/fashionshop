@@ -3,16 +3,14 @@ package com.project.shopapp.controllers;
 import com.project.shopapp.dtos.UserDTO;
 import com.project.shopapp.dtos.UserLoginDTO;
 import com.project.shopapp.entities.User;
-import com.project.shopapp.respone.LoginResponse;
-import com.project.shopapp.respone.Message;
-import com.project.shopapp.respone.RegisterResponse;
-import com.project.shopapp.respone.UserResponse;
+import com.project.shopapp.respone.*;
 import com.project.shopapp.services.IUserService;
 import com.project.shopapp.componens.LocalizationUtils;
 import com.project.shopapp.utils.MessageKey;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +60,9 @@ public class UserControlller {
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         try {
             String token = userService.login(userLoginDTO.getPhoneNumber(), userLoginDTO.getPassword());
-
+            if(token.equals("BanAccount")){
+                return  ResponseEntity.badRequest().body(LoginResponse.builder().message("Tài khoản bị khóa").build());
+            }
             return ResponseEntity.ok(LoginResponse.builder().message(localizationUtils.getLocalizedMessage(MessageKey.LOGIN_SUCCESSFULLY)).token(token).build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(LoginResponse.builder().message(localizationUtils.getLocalizedMessage(MessageKey.LOGIN_FAILED, e.getMessage())).build());
@@ -85,15 +85,39 @@ public class UserControlller {
             return    ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
         }
     }
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAllUsers(@RequestParam(value = "keyword", required = false) String keyword,
                                          @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                                          @RequestParam(value = "limit", required = false, defaultValue = "10") int limit){
         try{
-            PageRequest pageRequest = PageRequest.of(page-1,limit, Sort.by("createAt").descending());
-        }catch (Exception e){
-            ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
+            PageRequest pageRequest = PageRequest.of(page-1,limit, Sort.by("createdAt").descending());
+            Page<UserResponse> userResponses = userService.getAllUsers(keyword,pageRequest);
+            UserResponseList userResponseList = UserResponseList.builder()
+                    .users(userResponses.getContent())
+                    .totalPage(userResponses.getTotalPages())
+                    .totalItem(userResponses.getNumberOfElements())
+                    .build();
+            return ResponseEntity.ok(userResponseList);
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
         }
-        return null;
+    }
+    @PutMapping("/ban")
+    public ResponseEntity<?> banUser(@RequestParam(value = "id", required = false) Long id){
+        try{
+            userService.banUser(id);
+            return ResponseEntity.ok(Message.builder().message("Ban thành công").build());
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
+        }
+    }
+    @PutMapping("/unban")
+    public ResponseEntity<?> unbanUser(@RequestParam("id") Long id){
+        try{
+            userService.unbanUser(id);
+            return ResponseEntity.ok(Message.builder().message("Unban thành công").build());
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(Message.builder().message(e.getMessage()).build());
+        }
     }
 }

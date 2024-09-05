@@ -20,6 +20,7 @@ import { AdminProductComponent } from './admin/product/product.component';
 import { ProductEditComponent } from './admin/product/product.edit.component';
 import { UserComponent } from './admin/user/user.component';
 import { UserEditComponent } from './admin/user/user.edit.component';
+import { UserOrderComponent } from './components/user.order/user.order.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,11 @@ export const routes: Routes = [
   {
     path: 'thong-tin-ca-nhan',
     component: UserDetailComponent,
+    // canActivate: [AuthGuardFn],
+  },
+  {
+    path: 'thong-tin-ca-nhan/thong-tin-don-hang',
+    component: UserOrderComponent,
     // canActivate: [AuthGuardFn],
   },
   {
