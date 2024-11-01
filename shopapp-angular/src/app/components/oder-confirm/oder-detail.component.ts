@@ -153,7 +153,7 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
       next: (response) => {
         this.cartService.removeCart();
         this.router.navigate(['/thong-tin-don-hang'], {
-          state: { orderData: response },
+          state: { orderData: response.result },
           queryParams: { id: response.result.id },
         });
         this.alert.showSuccess('Đặt hàng thành công');

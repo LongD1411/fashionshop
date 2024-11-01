@@ -26,7 +26,7 @@ export class OrderSuccessComponent implements OnInit {
 
   ngOnInit(): void {
     this.orderData = history.state.orderData;
-
+    
     if (this.orderData) {
       this.updateThumbnails(this.orderData.order_detail);
     } else {

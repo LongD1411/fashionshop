@@ -64,10 +64,10 @@ export class RegisterComponent {
           this.registrationMessage = 'Đăng ký thành công!';
           this.isError = false;
         },
-        error: (error: any) => {
-          const errorResponse = JSON.parse(error.error);
+        error: (error) => {
+          const errorResponseMessage = error.error.message ;
           this.registrationMessage =
-            errorResponse.message || 'An error occurred during registration';
+            errorResponseMessage || 'An error occurred during registration';
           console.log(error);
           this.isError = true;
         },
