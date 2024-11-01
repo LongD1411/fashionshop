@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ProductResponse } from '../responses/product/product.response';
 import { CartItemStorage } from '../responses/cart.item';
+import { CurrencyService } from './currency.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,12 +16,12 @@ export class CartService {
     quantity: number;
   }[] = [];
   private cartSubject: BehaviorSubject<CartItemStorage[]>;
-  constructor() {
+  constructor(public currency: CurrencyService) {
     const storeCart = localStorage.getItem('Cart');
     if (storeCart) {
       this.cart = JSON.parse(storeCart);
     }
-
+[]
     this.cartQuantity = new BehaviorSubject<number>(this.cart.length);
     this.cartSubject = new BehaviorSubject<CartItemStorage[]>(this.cart);
   }
@@ -72,7 +73,7 @@ export class CartService {
     return this.cartQuantity.asObservable();
   }
   removeItem(id: number): void {
-    this.cart = this.cart.filter((item) => item.product_id !== id);
+    this.cart = this.cart.filter((item) => item.product_id != id);
     this.updateCart(this.cart);
   }
   removeCart() {

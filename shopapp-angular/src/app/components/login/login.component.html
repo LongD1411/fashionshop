@@ -1,3 +1,4 @@
+
 <h3 (click)="homeNavigate()" class="nav-link" style="margin-top: 10px; margin-left: 10px; cursor: pointer">
   <i class="fa-solid fa-arrow-left"></i> Home
 </h3>
@@ -35,15 +36,6 @@
           </div>
           <div *ngIf="registrationMessage" [ngClass]="{ error: isError, success: !isError }">
             {{ registrationMessage }}
-          </div>
-          <div class="form-group">
-            <div class="form-check checkbox-text">
-              <span style="display: flex">
-                <input type="checkbox" class="form-check-input" id="remember" />
-                <label class="form-check-label text-start" for="remember">Ghi nhớ đăng nhập?</label>
-              </span>
-              <a class="register-link">Quên mật khẩu ?</a>
-            </div>
           </div>
           <button type="submit" class="login-button">Đăng nhập</button>
           <div class="divider"></div>

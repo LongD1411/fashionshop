@@ -43,8 +43,8 @@ export class CategoryEditComponent implements OnInit {
     if (this.categoryId) {
       this.categoryService.getCategory(this.categoryId).subscribe({
         next: (response) => {
-          this.category = response;
-          if (response.thumbnail) {
+          this.category = response.result;
+          if (this.category.thumbnail) {
             this.category.thumbnail = `${enviroment.apiImage}/${this.category.thumbnail}`;
           }
           this.categoryForm.patchValue({
@@ -84,7 +84,7 @@ export class CategoryEditComponent implements OnInit {
       this.categoryService.createCategory(formData).subscribe({
         next: (response) => {
           this.router.navigate(['quan-ly/category/edit'], {
-            queryParams: { id: response.id },
+            queryParams: { id: response.result.id },
           });
           this.alert.showSuccess('Tạo thành công').then((result) => {
             if (result.isConfirmed) {
@@ -115,7 +115,7 @@ export class CategoryEditComponent implements OnInit {
         this.categoryService.updateCategory(formData).subscribe({
           next: (response) => {
             this.router.navigate(['quan-ly/category/edit'], {
-              queryParams: { id: response.id },
+              queryParams: { id: response.result.id },
             });
             this.alert.showSuccess('Cập nhật thành công').then((result) => {
               if (result.isConfirmed) {
@@ -123,8 +123,8 @@ export class CategoryEditComponent implements OnInit {
               }
             });
           },
-          error: (response) => {
-            this.alert.showError('Không cập nhật được');
+          error: (error) => {
+            this.alert.showError(error.error);
           },
         });
       }

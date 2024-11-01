@@ -1,68 +1,52 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.componens.LocalizationUtils;
-import com.project.shopapp.dtos.OrderDetailDTO;
-import com.project.shopapp.respone.OrderDetailResponse;
+import com.project.shopapp.dtos.request.OrderDetailDTO;
+import com.project.shopapp.dtos.respone.ApiResponse;
+import com.project.shopapp.dtos.respone.OrderDetailResponse;
 import com.project.shopapp.services.IOrderDetailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
+
 @RestController
 @RequestMapping("${api.prefix}/order-details")
 @RequiredArgsConstructor
 public class OrderDetaillController {
     private final IOrderDetailService orderDetailService;
     private final LocalizationUtils localizationUtils;
-    @PostMapping("")
-    public ResponseEntity<?> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO){
-        try {
-            OrderDetailResponse orderDetailResponse =  orderDetailService.createOrderDetail(orderDetailDTO);
-            return  ResponseEntity.ok(orderDetailResponse);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+    @PostMapping
+    public ApiResponse<OrderDetailResponse> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO) {
+        OrderDetailResponse orderDetailResponse = orderDetailService.createOrderDetail(orderDetailDTO);
+        return ApiResponse.<OrderDetailResponse>builder().result(orderDetailResponse).build();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderDetail(@Valid @PathVariable("id") Long id ){
-        try {
-            OrderDetailResponse orderDetailResponse = orderDetailService.getOrderDetail(id);
-            return ResponseEntity.ok(orderDetailResponse);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping
+    public ApiResponse<OrderDetailResponse> getOrderDetail(@Valid @RequestParam("id") Long id) {
+        OrderDetailResponse orderDetailResponse = orderDetailService.getOrderDetail(id);
+        return ApiResponse.<OrderDetailResponse>builder().result(orderDetailResponse).build();
     }
     // Lấy ra danh sách các order detail của  1 order
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<?> getOrderDetails(@Valid @PathVariable("orderId") Long orderId ){
-        try{
-            List<OrderDetailResponse> orderDetailResponseList = orderDetailService.findByOrderId(orderId);
-            return ResponseEntity.ok(orderDetailResponseList);
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping("/order")
+    public ApiResponse<OrderDetailResponse> getOrderDetails(@Valid @RequestParam("id") Long orderId) {
+        List<OrderDetailResponse> orderDetailResponseList = orderDetailService.findByOrderId(orderId);
+        return  ApiResponse.<OrderDetailResponse>builder().results(orderDetailResponseList).build();
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateOrderDetail(@Valid @PathVariable("id") Long id,
-                                               @RequestBody OrderDetailDTO orderDetailDTO){
-        try{
-            OrderDetailResponse orderDetailResponse = orderDetailService.updateOrderDetail(id,orderDetailDTO);
-            return ResponseEntity.ok(orderDetailResponse);
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
 
+    @PutMapping
+    public ApiResponse<OrderDetailResponse> updateOrderDetail(@RequestParam("id") Long id,
+                                              @Valid @RequestBody OrderDetailDTO orderDetailDTO) {
+        OrderDetailResponse orderDetailResponse = orderDetailService.updateOrderDetail(id, orderDetailDTO);
+        return ApiResponse.<OrderDetailResponse>builder().result(orderDetailResponse).build();
     }
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrderDetail(@Valid @PathVariable("id") Long id){
-        try{
-            orderDetailService.deleteOrderDetail(id);
-            return ResponseEntity.ok("delete success");
-        }catch (Exception e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+    @DeleteMapping
+    public ApiResponse<Void> deleteOrderDetail(@RequestParam("id") Long id) {
+        orderDetailService.deleteOrderDetail(id);
+        return ApiResponse.<Void>builder().message("Xoa thanh cong order detail id " + id).build();
     }
 }

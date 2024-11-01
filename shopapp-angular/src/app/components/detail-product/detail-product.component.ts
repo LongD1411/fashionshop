@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { CartService } from '../../service/cart.service';
 import { Size } from '../../responses/size.response';
 import { SweetAlertService } from '../../service/sweet-alert.service';
+import { CurrencyService } from '../../service/currency.service';
 @Component({
   selector: 'app-detail-product',
   standalone: true,
@@ -25,7 +26,8 @@ export class DetailProductComponent implements OnInit {
     private productService: ProductService,
     private router: Router,
     private cartService: CartService,
-    private alert: SweetAlertService
+    private alert: SweetAlertService,
+    public currency:CurrencyService
   ) {}
   ngOnInit(): void {
     window.scroll(0, 0);
@@ -35,7 +37,7 @@ export class DetailProductComponent implements OnInit {
     if (this.productId) {
       this.productService.getProduct(this.productId).subscribe({
         next: (response) => {
-          this.product = response;
+          this.product = response.result;
           if (this.product?.thumbnail) {
             this.product.thumbnail = `${enviroment.apiImage}/${this.product?.thumbnail}`;
           }
@@ -45,7 +47,6 @@ export class DetailProductComponent implements OnInit {
               return item;
             });
           }
-          console.log(this.product)
           // if (this.product?.sizes) {
           //   this.sortSizes(this.product.sizes);
           // }
@@ -58,7 +59,7 @@ export class DetailProductComponent implements OnInit {
     }
     this.productService.getTop4ProductUpdated().subscribe({
       next: (response) => {
-        this.top4ProductUpdated = response;
+        this.top4ProductUpdated = response.results;
         this.top4ProductUpdated.map((product) => {
           product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
         });
@@ -90,86 +91,17 @@ export class DetailProductComponent implements OnInit {
   }
   viewProductDetails(productId: number) {
     this.router
-      .navigate(['/chi-tiet-san-pham', productId])
-      .then(() => window.scroll(0, 0));
+      .navigate(['/chi-tiet-san-pham'],{queryParams: {id:productId}})
+      .then(() => window.scroll(0, 0))
+      .then(()=> window.location.reload());
   }
   addToCart(id: number) {
     if (id) {
-      this.cartService.setCart(id, this.selectedSizeId!, 1);
+      this.cartService.setCart(id, this.selectedSizeId!, this.quantity);
     }
     this.alert.showSuccess('Thêm thành công');
   }
   onSizeChange(sizeId: number): void {
     this.selectedSizeId = sizeId;
   }
-  // product: ProductResponse | undefined;
-  // currentIndex: number = 0;
-  // quantity: number = 1;
-  // constructor(
-  //   private productService: ProductService,
-  //   private route: ActivatedRoute,
-  //   private cartService: CartService
-  // ) {}
-  // ngOnInit() {
-  //   const id = this.route.snapshot.paramMap.get('id');
-  //   if (id != null) {
-  //     this.productService.getProduct(id).subscribe({
-  //       next: (response: any) => {
-  //         if (response.product_images && response.product_images.length > 0) {
-  //           response.product_images.forEach(
-  //             (productImage: ProductImageResponse) => {
-  //               productImage.thumbnail_url = `${enviroment.apiBaseUrl}/products/images/${productImage.thumbnail_url}`;
-  //             }
-  //           );
-  //         }
-  //         this.product = response;
-  //         console.log(this.product);
-  //         this.showImage(0);
-  //       },
-  //       complete: () => {},
-  //       error: (error: any) => {
-  //         console.log(error);
-  //       },
-  //     });
-  //   }
-  // }
-  // showImage(index: number) {
-  //   if (
-  //     this.product &&
-  //     this.product.product_images &&
-  //     this.product.product_images.length > 0
-  //   ) {
-  //     if (index >= this.product.product_images.length) {
-  //       index = 0;
-  //     }
-  //     if (index < 0) {
-  //       index = this.product.product_images.length - 1;
-  //     }
-  //   }
-  //   this.currentIndex = index;
-  // }
-  // nextImage() {
-  //   this.currentIndex += 1;
-  //   this.showImage(this.currentIndex);
-  // }
-  // previousImage() {
-  //   this.currentIndex -= 1;
-  //   this.showImage(this.currentIndex);
-  // }
-  // clickImage(index: number) {
-  //   this.showImage(index);
-  // }
-  // upQuantity() {
-  //   this.quantity += 1;
-  // }
-  // downQuantity() {
-  //   if (this.quantity > 1) {
-  //     this.quantity -= 1;
-  //   }
-  // }
-  // addToCart() {
-  //   if (this.product?.id && this.quantity) {
-  //     this.cartService.setCart(this.product?.id, this.quantity);
-  //   }
-  // }
 }

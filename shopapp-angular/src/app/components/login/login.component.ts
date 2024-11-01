@@ -9,9 +9,12 @@ import {
 import { UserService } from '../../service/user.service';
 import { LoginDTO } from '../../dtos/user/login.dto';
 import { TokenService } from '../../service/token.service';
-import { LoginResponse } from '../../responses/user/login.response';
+import { AuthResponse } from '../../responses/auth.response';
 import { Router, RouterLink } from '@angular/router';
 import { SweetAlertService } from '../../service/sweet-alert.service';
+import { AuthService } from '../../service/auth.service';
+import { BaseResponse } from '../../responses/base.response';
+import { AuthDTO } from '../../dtos/auth.dto';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -26,7 +29,7 @@ export class LoginComponent {
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserService,
+    private authService: AuthService,
     private tokenService: TokenService,
     private router: Router,
     private alert: SweetAlertService
@@ -42,22 +45,27 @@ export class LoginComponent {
         phone_number: this.loginForm.get('phone')?.value,
         password: this.loginForm.get('password')?.value,
       };
-      this.userService.login(loginData).subscribe({
-        next: (response: LoginResponse) => {
-          this.registrationMessage = response.message;
-          const { token } = response;
+      this.authService.login(loginData).subscribe({
+        next: (response) => {
+          const token = response.result.token;
           this.tokenService.setToken(token);
-          this.router.navigate(['/']);
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.scope && payload.scope.includes('ROLE_ADMIN')) {
+            this.router.navigate(['/quan-ly']);
+          } else {
+            this.router.navigate(['/']);
+          }
           this.alert.showSuccess('Đăng nhập thành công');
         },
-        error: (error: any) => {
-          this.alert.showError(error.error.message);
+        error: (response) => {
+          this.alert.showError(response.error.message);
           this.isError = true;
         },
         complete: () => {},
       });
+
     } else {
-      this.registrationMessage = 'Please fill all required fields correctly.';
+      this.registrationMessage = 'Điền đúng định dạng các trường.';
       this.isError = true;
     }
   }

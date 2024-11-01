@@ -1,48 +1,56 @@
 package com.project.shopapp.controllers;
 
-import com.project.shopapp.respone.UserResponse;
+import com.nimbusds.jose.JOSEException;
+import com.project.shopapp.dtos.request.*;
+import com.project.shopapp.dtos.respone.ApiResponse;
+import com.project.shopapp.dtos.respone.AuthResponse;
+import com.project.shopapp.dtos.respone.IntrospectResponse;
+import com.project.shopapp.dtos.respone.UserResponse;
+import com.project.shopapp.services.AuthService;
 import com.project.shopapp.services.IUserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
+import java.util.Date;
 
 @RestController
 @RequestMapping(value = "${api.prefix}/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private  final IUserService userService;
+    private final AuthService authService;
+    private final IUserService userService;
 
-    // API kiểm tra xem token có hợp lệ không
-    @GetMapping("/token/validate")
-    public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
-        try{
-            if(!token.isEmpty()) {
-                token = token.substring(7);
-                boolean isTokenValid = userService.isTokenValid(token);
-                return ResponseEntity.ok(isTokenValid);
-            }
-            return  ResponseEntity.badRequest().body("");
-        }catch (Exception e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @PostMapping("/register")
+    public ApiResponse<UserResponse> register(@RequestBody UserDTO request) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.createUser(request))
+                .build();
+    }
+
+    @PostMapping("/validate")
+    public ApiResponse<IntrospectResponse> validateToken(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
+        var result = authService.introspect(request);
+        return ApiResponse.<IntrospectResponse>builder().result(result).build();
 
     }
 
-    // API kiểm tra xem người dùng có hợp lệ không
-    @GetMapping("/user/validate")
-    public ResponseEntity<?> validateUser(@RequestHeader("Authorization") String token) {
-        try{
-            if(!token.isEmpty()) {
-                token = token.substring(7);
-                boolean isUserValid = userService.isUserValid(token);
-                return ResponseEntity.ok(isUserValid);
-            }
-            return  ResponseEntity.badRequest().body("");
-        }catch (Exception e){
-            return  ResponseEntity.badRequest().body(e.getMessage());
-        }
+    //    @PostMapping("/refresh")
+//    public ApiResponse<AuthResponse> validateToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+//        var result = authService.refreshToken(request);
+//        return ApiResponse.<AuthResponse>builder().result(result).build();
+//
+//    }
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authService.logout(request);
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/login")
+    public ApiResponse<AuthResponse> authenticate(@Valid @RequestBody AuthRequest request) {
+        var result = authService.authenticate(request);
+        return ApiResponse.<AuthResponse>builder().result(result).build();
     }
 }

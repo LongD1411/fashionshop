@@ -21,7 +21,7 @@ export class SizeComponent implements OnInit {
   ngOnInit(): void {
     this.sizeService.getAllSize().subscribe({
       next: (response) => {
-        this.sizes = response;
+        this.sizes = response.results;
       },
     });
   }

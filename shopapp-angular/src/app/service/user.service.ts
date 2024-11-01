@@ -7,12 +7,11 @@ import { enviroment } from '../enviroments/enviroment';
 import { Router } from '@angular/router';
 import { UserResponse } from '../responses/user/user.response';
 import { UpdateUserDTO } from '../dtos/user/update.user.dto';
+import { BaseResponse } from '../responses/base.response';
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiRegister = `${enviroment.apiBaseUrl}/users/register`;
-  private apiLogin = `${enviroment.apiBaseUrl}/users/login`;
   private apiUserDetail = `${enviroment.apiBaseUrl}/users/detail`;
   private apiUserUpdate = `${enviroment.apiBaseUrl}/users/update`;
   private apiGetAllUser = `${enviroment.apiBaseUrl}/users/all`;
@@ -26,36 +25,17 @@ export class UserService {
   private createHeader(): HttpHeaders {
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Accept-Language': 'vi',
     });
   }
 
-  registerData(registerData: RegisterDTO): Observable<string> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(this.apiRegister, registerData, {
-      headers: this.apiConfig.headers,
-      responseType: 'text',
-    });
+  getUserDetail(): Observable<BaseResponse<UserResponse>> {
+    return this.http.get<BaseResponse<UserResponse>>(this.apiUserDetail);
   }
-
-  login(loginDTO: LoginDTO): Observable<any> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    return this.http.post(this.apiLogin, loginDTO, {
+  updatedUser(user: UpdateUserDTO): Observable<BaseResponse<UserResponse>> {
+    const params = new HttpParams().set('id', user.id);
+    return this.http.put<BaseResponse<UserResponse>>(this.apiUserUpdate, user, {
       headers: this.apiConfig.headers,
-    });
-  }
-  logout() {
-    localStorage.removeItem('access_token');
-    this.router.navigate(['dang-nhap']);
-  }
-  getUserDetail(): Observable<any> {
-    return this.http.post(this.apiUserDetail, null, {
-      headers: this.apiConfig.headers,
-    });
-  }
-  updatedUser(user: UpdateUserDTO): Observable<any> {
-    return this.http.put(this.apiUserUpdate, user, {
-      headers: this.apiConfig.headers,
+      params: params,
     });
   }
   getAllUsers(page: number, limit: number, keyword: string): Observable<any> {

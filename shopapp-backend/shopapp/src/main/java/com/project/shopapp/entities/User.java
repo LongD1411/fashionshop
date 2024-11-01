@@ -6,10 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -19,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User extends BaseEntity implements UserDetails {
+public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,30 +33,19 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "password", length = 200, nullable = false)
     private String password;
+
     @Column(name = "is_Active")
     private  boolean active;
+
     @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(name = "facebook_account_id")
-    private int facebookAccountId;
+    private String facebookAccountId;
 
     @Column(name = "google_account_id")
-    private int googleAccountId;
+    private String googleAccountId;
 
-    @JoinColumn(name ="role_id")
-    @ManyToOne
-    private Role role;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority("ROLE_"+getRole().getName()));
-        return authorityList;
-    }
-
-    @Override
-    public String getUsername() {
-        return phoneNumber;
-    }
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 }

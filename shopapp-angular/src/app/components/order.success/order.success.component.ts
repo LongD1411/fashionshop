@@ -4,6 +4,7 @@ import { OrderService } from '../../service/order.service';
 import { CommonModule } from '@angular/common';
 import { enviroment } from '../../enviroments/enviroment';
 import { FormatDate } from '../../service/fomat.date.service';
+import { CurrencyService } from '../../service/currency.service';
 
 @Component({
   selector: 'app-order.success',
@@ -19,7 +20,8 @@ export class OrderSuccessComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private orderService: OrderService,
-    private formatDate: FormatDate
+    private formatDate: FormatDate,
+    public currency:CurrencyService
   ) {}
 
   ngOnInit(): void {
@@ -33,7 +35,7 @@ export class OrderSuccessComponent implements OnInit {
         if (this.orderID) {
           this.orderService.getOrderSuccess(this.orderID).subscribe({
             next: (response) => {
-              this.orderData = response;
+              this.orderData = response.result;
               this.updateThumbnails(this.orderData.order_detail);
               const dob = new Date(this.orderData.created_at);
               this.orderData.created_at = this.formatDate.getFormattedDate(dob);

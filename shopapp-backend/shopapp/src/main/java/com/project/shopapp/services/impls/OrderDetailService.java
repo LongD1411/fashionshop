@@ -1,17 +1,16 @@
 package com.project.shopapp.services.impls;
 
-import com.project.shopapp.dtos.OrderDetailDTO;
+import com.project.shopapp.dtos.request.OrderDetailDTO;
+import com.project.shopapp.dtos.respone.OrderDetailResponse;
 import com.project.shopapp.entities.Order;
 import com.project.shopapp.entities.OrderDetail;
 import com.project.shopapp.entities.Product;
-import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
 import com.project.shopapp.repositories.OrderDetailRepository;
 import com.project.shopapp.repositories.OrderRepository;
 import com.project.shopapp.repositories.ProductRepository;
-import com.project.shopapp.respone.OrderDetailResponse;
-import com.project.shopapp.respone.OrderResponese;
 import com.project.shopapp.services.IOrderDetailService;
-import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,11 +30,11 @@ public class OrderDetailService implements IOrderDetailService {
     private ModelMapper modelMapper;
 
     @Override
-    public OrderDetailResponse createOrderDetail(OrderDetailDTO orderDetailDTO) throws Exception {
+    public OrderDetailResponse createOrderDetail(OrderDetailDTO orderDetailDTO) {
         Order order = orderRepository.findById(orderDetailDTO.getOrderId()).orElseThrow(
-                () -> new DataNotFoundException("Can't find order with id: " + orderDetailDTO.getOrderId()));
+                () -> new AppException(ErrorCode.DATA_NOT_EXISTED));
         Product product = productRepository.findById(orderDetailDTO.getProductId()).orElseThrow(
-                () -> new DataNotFoundException("Can't find product with id: " + orderDetailDTO.getProductId()));
+                () ->  new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
 
         OrderDetail orderDetail = OrderDetail.builder()
                 .price(orderDetailDTO.getPrice())
@@ -53,13 +52,13 @@ public class OrderDetailService implements IOrderDetailService {
 
 
     @Override
-    public OrderDetailResponse updateOrderDetail(Long id, OrderDetailDTO orderDetailDTO) throws Exception {
+    public OrderDetailResponse updateOrderDetail(Long id, OrderDetailDTO orderDetailDTO){
         OrderDetail existingOrderDetail = orderDetailRepository.findById(id).orElseThrow(
-                () -> new DataNotFoundException("Can't find order detail with id: " + orderDetailDTO.getOrderId()));
+                () ->  new AppException(ErrorCode.DATA_NOT_EXISTED));
         Order order = orderRepository.findById(orderDetailDTO.getOrderId()).orElseThrow(
-                () -> new DataNotFoundException("Can't find order with id: " + orderDetailDTO.getOrderId()));
+                () ->  new AppException(ErrorCode.DATA_NOT_EXISTED));
         Product product = productRepository.findById(orderDetailDTO.getProductId()).orElseThrow(
-                () -> new DataNotFoundException("Can't find product with id: " + orderDetailDTO.getProductId()));
+                () -> new AppException(ErrorCode.DATA_NOT_EXISTED));
         existingOrderDetail.setProduct(product);
         existingOrderDetail.setOrder(order);
         existingOrderDetail.setPrice(orderDetailDTO.getPrice());
@@ -72,7 +71,7 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
-    public List<OrderDetailResponse> findByOrderId(Long orderId) throws Exception {
+    public List<OrderDetailResponse> findByOrderId(Long orderId) {
         List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderId(orderId);
         List<OrderDetailResponse> orderDetailResponseList = new ArrayList<>();
         for (OrderDetail orderDetail : orderDetailList) {
@@ -83,16 +82,16 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
-    public OrderDetailResponse getOrderDetail(Long id) throws Exception {
+    public OrderDetailResponse getOrderDetail(Long id){
         OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(
-                () -> new DataNotFoundException("Can't find order with id: " + id));
+                () -> new AppException(ErrorCode.DATA_NOT_EXISTED));
         OrderDetailResponse orderDetailResponse = new OrderDetailResponse();
         modelMapper.typeMap(OrderDetail.class, OrderDetailResponse.class).map(orderDetail, orderDetailResponse);
         return orderDetailResponse;
     }
 
     @Override
-    public void deleteOrderDetail(Long id) throws Exception {
+    public void deleteOrderDetail(Long id){
         orderDetailRepository.deleteById(id);
     }
 }

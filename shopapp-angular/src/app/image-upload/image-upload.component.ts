@@ -5,7 +5,6 @@ import { Component } from '@angular/core';
   selector: 'app-image-upload',
   standalone: true,
   templateUrl: './image-upload.component.html',
-  styleUrls: ['./image-upload.component.css'],
   imports: [CommonModule],
 })
 export class ImageUploadComponent {

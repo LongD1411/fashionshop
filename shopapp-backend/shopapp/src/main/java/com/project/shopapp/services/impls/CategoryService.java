@@ -1,12 +1,12 @@
 package com.project.shopapp.services.impls;
 
 import com.project.shopapp.componens.CategoryDeletedEvent;
-import com.project.shopapp.dtos.CategoryDTO;
+import com.project.shopapp.dtos.request.CategoryDTO;
 import com.project.shopapp.entities.Category;
-import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
 import com.project.shopapp.repositories.CategoryRepository;
 import com.project.shopapp.services.ICategoryService;
-import com.project.shopapp.statics.Image;
 import com.project.shopapp.utils.ImageUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -71,7 +70,7 @@ public class CategoryService implements ICategoryService {
     @Transactional
     public void deleteCategory(long id) throws Exception {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Category not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_EXISTED));
 
         String thumbnail = category.getThumbnail();
 

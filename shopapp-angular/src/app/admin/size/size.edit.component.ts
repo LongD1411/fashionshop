@@ -40,7 +40,7 @@ export class SizeEditComponent implements OnInit {
     if (this.sizeId) {
       this.sizeService.getSize(this.sizeId).subscribe({
         next: (response) => {
-          this.size = response;
+          this.size = response.result;
           this.sizeForm.patchValue({
             size_name: this.size?.sizeName,
             size_code: this.size?.sizeCode,

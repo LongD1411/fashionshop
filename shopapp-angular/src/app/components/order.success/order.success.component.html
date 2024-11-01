@@ -32,7 +32,7 @@
       </tr>
       <tr class="tr">
         <td class="td">Địa chỉ giao hàng:</td>
-        <td class="td">{{ orderData?.address }}</td>
+        <td class="td">{{ orderData?.shipping_address }}</td>
       </tr>
       <tr class="tr">
         <td class="td">Ngày đặt hàng:</td>
@@ -74,15 +74,15 @@
               {{ item.product_name }}
             </td>
             <td class="align-middle">{{ item.size_name }}</td>
-            <td class="align-middle">{{ item.price }}</td>
+            <td class="align-middle">{{currency.formatCurrency(item.price) }}</td>
             <td class="align-middle">{{ item.quantity }}</td>
-            <td class="align-middle">{{ item.total_money }}</td>
+            <td class="align-middle">{{ currency.formatCurrency(item.total_money)}}</td>
           </tr>
         </ng-container>
       </tbody>
     </table>
-    <h4 style="margin: 5px" class="text-right">
-      Tổng cộng: {{ orderData?.total_money }}
+    <h4 style="margin: 5px" class="text-right" *ngIf="orderData?.total_money != null">
+      Tổng cộng: {{ currency.formatCurrency(orderData?.total_money) }}
     </h4>
   </div>
 </div>

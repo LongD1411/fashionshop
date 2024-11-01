@@ -18,6 +18,7 @@ import { OrderDetailResponse } from '../../responses/order/order.detail.response
 import { Subscription, forkJoin } from 'rxjs';
 import { CartItemStorage } from '../../responses/cart.item';
 import { Router, RouterLink } from '@angular/router';
+import { CurrencyService } from '../../service/currency.service';
 
 @Component({
   selector: 'app-order',
@@ -38,7 +39,8 @@ export class OrderComponent implements OnInit {
   constructor(
     private cartService: CartService,
     private route: Router,
-    private productService: ProductService
+    private productService: ProductService,
+    public currency :CurrencyService
   ) {}
   ngOnInit(): void {
     this.cartSubcription = this.cartService.getCart().subscribe((items) => {
@@ -50,12 +52,12 @@ export class OrderComponent implements OnInit {
       } else {
         forkJoin([
           this.productService.getAllSize(),
-          this.productService.getProductOrders(this.productIds),
+          this.productService.getProductByCart(this.productIds),
         ]).subscribe({
           next: ([sizesResponse, productsResponse]) => {
-            this.size = sizesResponse;
+            this.size = sizesResponse.results;
             this.localProduct = this.cart.map((cartLocal) => {
-              const product = productsResponse.find(
+              const product = productsResponse.results.find(
                 (productAPI) => productAPI.id == cartLocal.product_id
               );
               if (product) {
@@ -103,101 +105,4 @@ export class OrderComponent implements OnInit {
   toConfirm() {
     this.route.navigate(['/xac-nhan']);
   }
-  // cartItems: { product: ProductResponse; quantity: number; total: number }[] =
-  //   [];
-  // orderProducts: ProductResponse[] = [];
-  // total_money: number = 0;
-  // orderForm: FormGroup;
-  // orderData: OrderDTO = {
-  //   user_id: 3,
-  //   fullname: '',
-  //   email: '',
-  //   phone_number: '',
-  //   address: '',
-  //   note: '',
-  //   total_money: 0,
-  //   payment_method: '',
-  //   shipping_method: '',
-  //   coupon_code: '',
-  //   cart_items: [],
-  // };
-  // constructor(
-  //   private productService: ProductService,
-  //   private cartService: CartService,
-  //   private fb: FormBuilder,
-  //   private orderService: OrderService
-  // ) {
-  //   this.orderForm = this.fb.group({
-  //     fullname: ['con me may', [Validators.required, Validators.maxLength(50)]],
-  //     email: ['e@em', [Validators.required, Validators.email]],
-  //     phone_number: [
-  //       '2344234',
-  //       [
-  //         Validators.required,
-  //         Validators.minLength(6),
-  //         Validators.maxLength(20),
-  //       ],
-  //     ],
-  //     address: ['a', [Validators.required]],
-  //     note: ['', []],
-  //     payment_method: ['cod', [Validators.required]],
-  //     shipping_method: ['express', [Validators.required]],
-  //   });
-  // }
-  // ngOnInit(): void {
-  //   const cart = this.cartService.getCart();
-  //   const productIds = Array.from(cart.keys());
-  //   this.productService.getProductOrders(productIds).subscribe({
-  //     next: (products) => {
-  //       if (products) {
-  //         this.cartItems = productIds.map((productId) => {
-  //           const product = products.find((p) => p.id === productId);
-  //           if (product) {
-  //             product.thumbnail = `${enviroment.apiBaseUrl}/products/images/${product.thumbnail}`;
-  //           }
-  //           return {
-  //             product: product!,
-  //             quantity: cart.get(productId)!,
-  //             total: product?.price! * cart.get(productId)!,
-  //           };
-  //         });
-  //       }
-  //       console.log(this.cartItems);
-  //       this.setToltal();
-  //     },
-  //     complete: () => {},
-  //     error: (error: any) => {
-  //       console.log(error);
-  //     },
-  //   });
-  // }
-  // setToltal() {
-  //   this.total_money = this.cartItems.reduce(
-  //     (result, item) => result + item.total,
-  //     0
-  //   );
-  // }
-  // submitHandler() {
-  //   if (this.orderForm.valid) {
-  //     this.orderData = {
-  //       ...this.orderData,
-  //       ...this.orderForm.value,
-  //     };
-  //     this.orderData.total_money = this.total_money;
-  //     this.cartItems.map((cartItem) => ({
-  //       product_id: cartItem.product.id,
-  //       quantity: cartItem.quantity,
-  //     }));
-  //     debugger;
-  //     this.orderService.oder(this.orderData).subscribe({
-  //       next: (response: any) => {
-  //         console.log(response);
-  //       },
-  //       error: (error) => {
-  //         console.log(error);
-  //       },
-  //       complete: () => {},
-  //     });
-  //   }
-  // }
 }

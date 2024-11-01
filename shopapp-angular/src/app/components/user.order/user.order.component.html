@@ -15,6 +15,6 @@
         <div>ID: {{order.id}}</div>
         <div>Người đặt: {{order.full_name}}</div>
         <div>Số điện thoại: {{order.phone_number}}</div>
-        <div>Thanh toán: {{order.total_money}}</div>
+        <div>Thanh toán: {{currency.formatCurrency(order.total_money)}}</div>
     </div>
 </div>

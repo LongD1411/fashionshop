@@ -1,6 +1,7 @@
 package com.project.shopapp.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.shopapp.dtos.request.ProductSizeDTO;
 import jakarta.persistence.*;
 import lombok.*;
 

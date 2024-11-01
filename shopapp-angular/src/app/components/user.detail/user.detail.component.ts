@@ -48,7 +48,7 @@ export class UserDetailComponent implements OnInit {
     this.userService.getUserDetail().subscribe({
       next: (response) => {
         if (response) {
-          this.userResponse = response;
+          this.userResponse = response.result;
           const dob = new Date(this.userResponse!.date_of_birth);
           this.formattedDate = this.getFormattedDate(dob);
           this.userDetailForm.patchValue({
@@ -74,6 +74,7 @@ export class UserDetailComponent implements OnInit {
   handleSubmit() {
     if (this.userDetailForm.valid) {
       const userDto: UpdateUserDTO = {
+        id: this.userResponse?.user_id!,
         fullname: this.userDetailForm.get('full_name')?.value,
         phone_number: this.userDetailForm.get('phone_number')?.value,
         address: this.userDetailForm.get('address')?.value,
@@ -89,7 +90,7 @@ export class UserDetailComponent implements OnInit {
             this.userService.updatedUser(userDto).subscribe({
               next: (response) => {
                 if (response) {
-                  this.userResponse = response;
+                  this.userResponse = response.result;
                   const dob = new Date(this.userResponse!.date_of_birth);
                   this.formattedDate = this.getFormattedDate(dob);
                   this.userDetailForm.patchValue({
@@ -102,7 +103,6 @@ export class UserDetailComponent implements OnInit {
                 this.alert.showSuccess('Cập nhật thông tin thành công');
               },
               error: (error) => {
-                this.router.navigate(['/dang-nhap']);
                 console.log(error);
                 if (error.error) {
                   this.alert.showError(error.error.message);

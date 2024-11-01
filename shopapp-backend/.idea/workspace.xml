@@ -4,11 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d19f967a-189c-4f6c-88ae-98b10d04a66a" name="Changes" comment="" />
+    <list default="true" id="d19f967a-189c-4f6c-88ae-98b10d04a66a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.edit.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/admin/product/product.edit.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/app.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/app.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/detail-product/detail-product.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/detail-product/detail-product.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/detail-product/detail-product.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/detail-product/detail-product.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/home/home.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/home/home.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/home/home.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/home/home.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/oder-confirm/oder-detail.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/oder-confirm/oder-detail.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/oder-confirm/oder-detail.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/oder-confirm/oder-detail.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/order.success/order.success.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/order.success/order.success.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/order.success/order.success.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/order.success/order.success.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/product/product.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/product/product.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/product/product.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/product/product.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/user.order/user.order.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/user.order/user.order.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../shopapp-angular/src/app/components/user.order/user.order.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../shopapp-angular/src/app/components/user.order/user.order.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shopapp/src/main/java/com/project/shopapp/services/impls/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/shopapp/src/main/java/com/project/shopapp/services/impls/UserService.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -17,9 +38,9 @@
       </MavenGeneralSettings>
     </option>
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2jozI2DVoINonrPv6i4mVJ0qVSf" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -29,6 +50,7 @@
   "keyToString": {
     "Application.DemoApplication.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/pc/Documents/yeu em/WorkSpace2/ShopApp/shopapp-backend/shopapp",
     "settings.editor.selected.configurable": "preferences.pluginManager"

@@ -33,6 +33,7 @@ import { CartService } from '../../service/cart.service';
 import { CartItemStorage } from '../../responses/cart.item';
 import { Size } from '../../responses/size.response';
 import { SweetAlertService } from '../../service/sweet-alert.service';
+import { CurrencyService } from '../../service/currency.service';
 
 @Component({
   selector: 'app-oder-confirm',
@@ -67,7 +68,8 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
     private cartService: CartService,
     private productService: ProductService,
     private router: Router,
-    private alert: SweetAlertService
+    private alert: SweetAlertService,
+    public currency: CurrencyService
   ) {
     this.orderForm = this.fb.group({
       full_name: ['', [Validators.required, Validators.maxLength(50)]],
@@ -76,14 +78,14 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
         '',
         [
           Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(20),
+          Validators.minLength(5),
+          Validators.maxLength(15),
         ],
       ],
-      address: ['', [Validators.required]],
+      shipping_address: ['', [Validators.required]],
       note: ['', []],
       payment_method: ['cod', [Validators.required]],
-      shipping_method: ['express', [Validators.required]],
+      shipping_method: ['Viettel Post', [Validators.required]],
     });
   }
   ngOnInit(): void {
@@ -96,12 +98,12 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
       } else {
         forkJoin([
           this.productService.getAllSize(),
-          this.productService.getProductOrders(this.productIds),
+          this.productService.getProductByCart(this.productIds),
         ]).subscribe({
           next: ([sizesResponse, productsResponse]) => {
-            this.size = sizesResponse;
+            this.size = sizesResponse.results;
             this.localProduct = this.cart.map((cartLocal) => {
-              const product = productsResponse.find(
+              const product = productsResponse.results.find(
                 (productAPI) => productAPI.id == cartLocal.product_id
               );
               if (product) {
@@ -148,20 +150,20 @@ export class OderConfirmComponent implements OnInit, AfterContentInit {
     this.orderData.total_money = this.getTotal();
     this.orderData.cart_items = this.cart;
     this.orderService.oder(this.orderData).subscribe({
-      next: (response: any) => {
+      next: (response) => {
         this.cartService.removeCart();
         this.router.navigate(['/thong-tin-don-hang'], {
           state: { orderData: response },
-          queryParams: { id: response.id },
+          queryParams: { id: response.result.id },
         });
         this.alert.showSuccess('Đặt hàng thành công');
       },
       error: (error) => {
         console.log(error);
-        if (error.status == 403)
+        if ((error.error.status = 400))
           this.alert.showError('Bạn cần đăng nhập để đặt hàng');
       },
-      complete: () => {},
+      complete: () => { },
     });
   }
 }

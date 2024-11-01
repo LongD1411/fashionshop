@@ -28,7 +28,7 @@ export class BannerComponent implements OnInit {
     });
     this.categoryService.getAllBanners().subscribe({
       next: (response) => {
-        this.banners = response;
+        this.banners = response.results;
         this.banners.map((item) => {
           item.thumbnail = `${enviroment.apiImage}/${item.thumbnail}`;
           return item;

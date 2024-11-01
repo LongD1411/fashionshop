@@ -1,8 +1,9 @@
 package com.project.shopapp.services.impls;
 
-import com.project.shopapp.dtos.BannerDTO;
+import com.project.shopapp.dtos.request.BannerDTO;
 import com.project.shopapp.entities.Banner;
-import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
 import com.project.shopapp.repositories.BannerRespository;
 import com.project.shopapp.respone.BannerResponse;
 import com.project.shopapp.services.IBannerService;
@@ -38,13 +39,13 @@ public class BannerService implements IBannerService {
     }
 
     @Override
-    public Banner getBanner(Long id) throws  Exception{
-        return bannerRespository.findById(id).orElseThrow(()-> new DataNotFoundException("Data not found"));
+    public Banner getBanner(Long id) {
+        return bannerRespository.findById(id).orElseThrow(()-> new AppException(ErrorCode.DATA_NOT_EXISTED));
     }
 
     @Override
     public void deleteBanner(Long id) throws Exception {
-        Banner banner = bannerRespository.findById(id).orElseThrow(()-> new DataNotFoundException("Data not found"));
+        Banner banner = bannerRespository.findById(id).orElseThrow(()->  new AppException(ErrorCode.DATA_NOT_EXISTED));
         if(banner!=null ){
             bannerRespository.deleteById(id);
             ImageUtil.deleteImage(banner.getThumbnail());
@@ -54,7 +55,7 @@ public class BannerService implements IBannerService {
     @Override
     @Transactional
     public Banner updateBanner(BannerDTO bannerDTO) throws Exception {
-        Banner banner = bannerRespository.findById(bannerDTO.getId()).orElseThrow(()-> new DataNotFoundException("Data not found"));
+        Banner banner = bannerRespository.findById(bannerDTO.getId()).orElseThrow(()->  new AppException(ErrorCode.DATA_NOT_EXISTED));
         banner.setDescription(bannerDTO.getDescription());
         banner.setTitle(bannerDTO.getTitle());
         String nameImageDelete = banner.getThumbnail();

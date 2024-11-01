@@ -46,7 +46,7 @@ export class ProductEditComponent implements OnInit {
       name: ['', Validators.required],
       price: ['', Validators.required],
       old_price: ['', Validators.required],
-      description: ['', Validators.required],
+      description: [''],
       category_id: ['', Validators.required],
       sku: ['', Validators.required],
       product_sizes: this.fb.array([]),
@@ -69,7 +69,7 @@ export class ProductEditComponent implements OnInit {
     if (this.productId) {
       this.productService.getProduct(this.productId).subscribe({
         next: (response) => {
-          this.product = response;
+          this.product = response.result;
           if (this.product?.thumbnail) {
             this.product.thumbnail = `${enviroment.apiImage}/${this.product.thumbnail}`;
           }
@@ -109,8 +109,8 @@ export class ProductEditComponent implements OnInit {
       this.sizeService.getAllSize(),
     ]).subscribe({
       next: ([categoriesResponse, sizesResponse]) => {
-        this.categories = categoriesResponse;
-        this.sizes = sizesResponse;
+        this.categories = categoriesResponse.results;
+        this.sizes = sizesResponse.results;
       },
     });
   }
@@ -189,11 +189,17 @@ export class ProductEditComponent implements OnInit {
     });
     this.productService.createProduct(formData).subscribe({
       next: (response) => {
-        this.router.navigate(['quan-ly/product']);
-        this.alert.showSuccess(`Thêm thành công sản phẩm`);
+        this.router.navigate(['quan-ly/san-pham/edit'], {
+          queryParams: { id: response.result.id },
+        });
+        this.alert.showSuccess('Thêm thành công').then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
       },
       error: (error) => {
-        console.log(error);
+        this.alert.showError(error.error);
       },
     });
   }
@@ -201,6 +207,7 @@ export class ProductEditComponent implements OnInit {
     const detailImageIds = this.detailImages.controls
       .map((item) => item.value.id)
       .filter((ids) => ids !== undefined);
+    debugger
     const productDTO = {
       id: this.productId,
       name: this.productForm.get('name')?.value,
@@ -212,14 +219,11 @@ export class ProductEditComponent implements OnInit {
       category_id: this.productForm.get('category_id')?.value,
       detail_image_ids: detailImageIds,
     };
-    console.log(productDTO);
     const thumbnail = this.productForm.get('thumbnail')?.value;
-    console.log(thumbnail);
     const detail_images = this.detailImages.controls
       .map((item) => item.value.file)
       .filter((file) => file !== undefined);
 
-    console.log(detail_images);
     const formData = new FormData();
     formData.append(
       'product',
@@ -233,18 +237,18 @@ export class ProductEditComponent implements OnInit {
     });
     this.productService.updateProduct(formData).subscribe({
       next: (response) => {
-        this.router.navigate(['quan-ly/product/edit'], {
+        this.router.navigate(['quan-ly/san-pham/edit'], {
           queryParams: { id: this.productId },
         });
         this.alert.showSuccess('Cập nhật thành công').then((result) => {
           if (result.isConfirmed) {
             window.location.reload();
-          }
+          } 
         });
       },
-      error: (response) => {
-        console.log(response);
-        this.alert.showError('Không cập nhật được');
+      error: (error) => {
+        console.log(error);
+        this.alert.showError(error.error.message);
       },
     });
   }

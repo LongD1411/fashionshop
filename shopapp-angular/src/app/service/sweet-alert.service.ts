@@ -16,11 +16,12 @@ export class SweetAlertService {
   }
 
   showError(message: string, title: string = 'Lỗi') {
-    Swal.fire({
+   return Swal.fire({
       title: title,
       text: message,
       icon: 'error',
       confirmButtonText: 'OK',
+       reverseButtons: true,
     });
   }
 

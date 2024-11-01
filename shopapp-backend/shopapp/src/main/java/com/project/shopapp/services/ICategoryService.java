@@ -1,11 +1,10 @@
 package com.project.shopapp.services;
 
-import com.project.shopapp.dtos.CategoryDTO;
+import com.project.shopapp.dtos.request.CategoryDTO;
 import com.project.shopapp.entities.Category;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 @Service
 public interface ICategoryService {

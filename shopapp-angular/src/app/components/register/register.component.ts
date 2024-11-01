@@ -13,11 +13,12 @@ import {
 import { UserService } from '../../service/user.service';
 import { RegisterDTO } from '../../dtos/user/register.dto';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../service/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule,RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
@@ -29,7 +30,8 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.profileForm = this.fb.group(
       {
@@ -52,14 +54,12 @@ export class RegisterComponent {
         phone_number: this.profileForm.get('phone')?.value,
         address: this.profileForm.get('address')?.value,
         password: this.profileForm.get('password')?.value,
-        retype_password: this.profileForm.get('retypePassword')?.value,
         date_of_birth: this.profileForm.get('dateOfBirth')?.value,
-        facebook_account_id: 0,
-        google_account_id: 0,
-        role_id: 2,
+        facebook_account_id: '',
+        google_account_id: '',
       };
 
-      this.userService.registerData(registerDTO).subscribe({
+      this.authService.register(registerDTO).subscribe({
         next: (response: any) => {
           this.registrationMessage = 'Đăng ký thành công!';
           this.isError = false;

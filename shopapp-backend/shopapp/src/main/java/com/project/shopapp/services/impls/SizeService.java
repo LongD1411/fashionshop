@@ -1,16 +1,18 @@
 package com.project.shopapp.services.impls;
 
-import com.project.shopapp.dtos.SizeDTO;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.project.shopapp.dtos.request.SizeDTO;
 import com.project.shopapp.entities.Size;
-import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
 import com.project.shopapp.repositories.SizeRepository;
 import com.project.shopapp.services.ISizeService;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintDeclarationException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.sqm.mutation.internal.temptable.AbstractDeleteExecutionDelegate;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class SizeService implements ISizeService {
+    private static final Logger log = LoggerFactory.getLogger(SizeService.class);
     private final SizeRepository sizeRepository;
 
     @Override
@@ -31,13 +34,12 @@ public class SizeService implements ISizeService {
     }
 
     @Override
-    public Size getSize(Long id) throws Exception {
-        Size size = sizeRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Không tìm thấy size"));
-        return size;
+    public Size getSize(Long id) {
+        return sizeRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
     }
 
     @Override
-    public Size createSize(SizeDTO sizeDTO) throws Exception {
+    public Size createSize(SizeDTO sizeDTO) {
         Size size = new Size().builder()
                 .sizeCode(sizeDTO.getSizeCode())
                 .sizeName(sizeDTO.getSizeName()).build();
@@ -52,8 +54,8 @@ public class SizeService implements ISizeService {
 
     @Override
     @Transactional
-    public Size updateSize(SizeDTO sizeDTO) throws Exception{
-        Size size = sizeRepository.findById(sizeDTO.getSizeId()).orElseThrow(()-> new DataNotFoundException("Không tìm thấy size"));
+    public Size updateSize(SizeDTO sizeDTO){
+        Size size = sizeRepository.findById(sizeDTO.getSizeId()).orElseThrow(()-> new AppException(ErrorCode.SIZE_NOT_EXISTED));
         size.setSizeName(sizeDTO.getSizeName());
         size.setSizeCode(sizeDTO.getSizeCode());
         return  sizeRepository.save(size);

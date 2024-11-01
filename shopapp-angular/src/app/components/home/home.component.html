@@ -23,7 +23,7 @@
               <a href="" class="dropdown-item">Baby's Dresses</a>
             </div>
           </div> -->
-          <a href="" class="nav-item nav-link" *ngFor="let category of categories">{{ category.name }}</a>
+          <a (click)="viewProductByCategory(category.id)" class="nav-item nav-link" *ngFor="let category of categories">{{ category.name }}</a>
         </div>
       </nav>
     </div>
@@ -56,7 +56,7 @@
                       cá nhân</a>
                   </li>
                   <li class="li-user-nav">
-                    <a style="text-decoration: none; color: rgb(108, 108, 108)" routerLink="thong-tin-ca-nhan/thong-tin-don-hang" [queryParams]="{id:userResponse.user_id}">Đơn hàng đã đặt</a>
+                    <a style="text-decoration: none; color: rgb(108, 108, 108)" (click)="viewAllOrders()">Đơn hàng đã đặt</a>
                   </li>
                   <li class="li-user-nav">
                     <a style="text-decoration: none; color: rgb(108, 108, 108)" (click)="logout()">Đăng xuất</a>
@@ -138,29 +138,12 @@
 </div>
 <!-- Featured End -->
 
-<!-- Categories Start -->
-<div class="container-fluid pt-5">
-  <div class="row px-xl-5 pb-3">
-    <ng-container *ngFor="let category of categories">
-      <div *ngIf="category.thumbnail" class="col-lg-4 col-md-6 pb-1">
-        <div class="cat-item d-flex flex-column border mb-4" style="padding: 30px">
-          <!-- <p class="text-right">15 Products</p> -->
-          <a href="" class="cat-img position-relative overflow-hidden mb-3">
-            <img class="img-fluid" [src]="category.thumbnail" alt="" />
-          </a>
-          <h5 class="font-weight-semi-bold m-0">{{ category.name }}</h5>
-        </div>
-      </div>
-    </ng-container>
-  </div>
-</div>
-<!-- Categories End -->
 
 <!-- Products Start -->
 <div class="container-fluid pt-5">
   <div class="text-center mb-4">
     <h2 class="section-title px-5">
-      <span class="px-2">Trandy Products</span>
+      <span class="px-2">New Products</span>
     </h2>
   </div>
   <div class="row px-xl-5 pb-3">
@@ -172,9 +155,9 @@
         <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
           <h6 class="text-truncate mb-3">{{ product.name }}</h6>
           <div class="d-flex justify-content-center">
-            <h6>{{ product.price }} VNĐ</h6>
+            <h6>{{currency.formatCurrency(product.price)}}</h6>
             <h6 class="text-muted ml-2">
-              <del>{{ product.old_price }} VNĐ</del>
+              <del>{{currency.formatCurrency(product.old_price)}}</del>
             </h6>
           </div>
         </div>

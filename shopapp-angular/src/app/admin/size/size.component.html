@@ -7,7 +7,7 @@
       <span style="margin-left: 5px">Thêm</span>
     </div>
   </div>
-  <table class="table">
+  <table class="table text-center">
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -20,7 +20,7 @@
     <tbody>
       <tr *ngFor="let size of sizes; let i = index">
         <th scope="row">{{ i+1 }}</th>
-        <td>{{ size.sizeName }}</td>
+        <td class="text-center">{{ size.sizeName }}</td>
         <td>{{ size.sizeCode }}</td>
         <td>
           <input

@@ -3,6 +3,7 @@ import { OrderService } from '../../service/order.service';
 import { OrderResponse } from '../../responses/order/order.response';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CurrencyService } from '../../service/currency.service';
 
 @Component({
   selector: 'app-user.order',
@@ -17,22 +18,17 @@ export class UserOrderComponent implements OnInit {
   constructor(
     private orderService: OrderService,
     private activeRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public currency: CurrencyService
   ) {}
   ngOnInit(): void {
-    this.activeRoute.queryParams.subscribe((param) => {
-      this.userId = param['id'];
+    this.orderService.getAllOrder().subscribe({
+      next: (response) => {
+        this.oders = response.results;
+      },
+      error: (error) => {},
+      complete() {},
     });
-    if (this.userId) {
-      this.orderService.getAllOrder(this.userId).subscribe({
-        next: (response) => {
-          this.oders = response;
-          console.log(this.oders);
-        },
-        error: (error) => {},
-        complete() {},
-      });
-    }
   }
   orderDetail(orderId: number) {
     this.router.navigate(['/thong-tin-don-hang'], {

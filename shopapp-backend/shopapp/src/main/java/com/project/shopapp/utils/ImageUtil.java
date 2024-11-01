@@ -1,5 +1,7 @@
 package com.project.shopapp.utils;
 
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
 import com.project.shopapp.respone.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,16 +38,14 @@ public class ImageUtil {
         return uniqueFileName;
     }
 
-    public static ResponseEntity<?> checkImage(MultipartFile file){
+    public static void checkImage(MultipartFile file){
         if (file.getSize() > MAX_FILE_SIZE) { // 10MB
-            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(
-                    Message.builder().message(FILE_TOO_LARGE).build());
+            throw  new AppException(ErrorCode.IMAGE_SIZE_OVERLOAD);
         }
         String contentType = file.getContentType();
         if (contentType == null || !contentType.startsWith("image/")) {
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(Message.builder().message(INVALID_FILE_TYPE).build());
+           throw new AppException(ErrorCode.MISSING_FORMATTED_DATA);
         }
-        return null;
     }
     public static void deleteImage(String imageName) throws IOException {
             Path filePath = Paths.get("uploadDir",imageName);

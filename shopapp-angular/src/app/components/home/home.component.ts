@@ -12,6 +12,10 @@ import { CartService } from '../../service/cart.service';
 import { UserService } from '../../service/user.service';
 import { UserResponse } from '../../responses/user/user.response';
 import { SweetAlertService } from '../../service/sweet-alert.service';
+import { CurrencyService } from '../../service/currency.service';
+import { AuthService } from '../../service/auth.service';
+import { TokenService } from '../../service/token.service';
+import { AuthDTO } from '../../dtos/auth.dto';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -28,7 +32,10 @@ export class HomeComponent {
     private productService: ProductService,
     private router: Router,
     private userService: UserService,
-    private alert: SweetAlertService
+    private alert: SweetAlertService,
+    public currency: CurrencyService,
+    private authService: AuthService,
+    private tokenService: TokenService
   ) {}
   ngOnInit(): void {
     forkJoin([
@@ -38,21 +45,23 @@ export class HomeComponent {
     ]).subscribe({
       next: ([categoriesResponse, bannersResponse, productResponse]) => {
         //1
-        this.categories = categoriesResponse;
+        this.categories = categoriesResponse.results;
         this.categories.map((category) => {
           if (category.thumbnail) {
             category.thumbnail = `${enviroment.apiImage}/${category.thumbnail}`;
           }
           return category;
         });
+        console.log(this.categories);
         //2
-        this.banners = bannersResponse;
+        this.banners = bannersResponse.results;
         this.banners.map((banner) => {
           banner.thumbnail = `${enviroment.apiImage}/${banner.thumbnail}`;
           return banner;
         });
+        console.log(this.banners);
         //3
-        this.top8ProductUpdated = productResponse;
+        this.top8ProductUpdated = productResponse.results;
         this.top8ProductUpdated.map((product) => {
           product.thumbnail = `${enviroment.apiImage}/${product.thumbnail}`;
         });
@@ -62,128 +71,43 @@ export class HomeComponent {
       },
       complete: () => {},
     });
-    this.userService.getUserDetail().subscribe({
-      next: (response) => {
-        this.userResponse = response;
-      },
-      error: (error) => {
-        this.userResponse = undefined;
-      },
-    });
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      this.userService.getUserDetail().subscribe({
+        next: (response) => {
+          this.userResponse = response.result;
+        },
+      });
+    }
   }
   viewProductDetails(productId: number) {
-    this.router.navigate(['/chi-tiet-san-pham'],{queryParams:{'id':productId}});
+    this.router.navigate(['/chi-tiet-san-pham'], {
+      queryParams: { id: productId },
+    });
   }
   logout() {
-    this.userService.logout();
-    this.alert.showSuccess('Đăng xuất thành công');
+    var token = this.tokenService.getToken();
+    if (token) {
+      const data = new AuthDTO(token);
+      this.authService.logout(data).subscribe({
+        next: (response) => {
+          localStorage.removeItem('access_token');
+          this.router.navigate(['dang-nhap']);
+          this.alert.showSuccess('Đăng xuất thành công');
+        },
+        error: (error) => {
+          this.alert.showError('Đã xảy ra lỗi');
+          console.log(error);
+        },
+      });
+    } else {
+      this.router.navigate(['dang-nhap']);
+    }
   }
-  // products: ProductResponse[] = [];
-  // currentPage: number = 1;
-  // limit: number = 3;
-  // pages: number[] = [];
-  // totalsPages: number = 0;
-  // visiblePages: number[] = [];
-  // categories: CategoryResponse[] = [];
-  // keyword: string = '';
-  // categoryId: number = 0;
-  // constructor(
-  //   private productService: ProductService,
-  //   private categoryService: CategoryService
-  // ) {}
-  // ngOnInit() {
-  //   this.getProducts(
-  //     this.currentPage,
-  //     this.limit,
-  //     this.keyword,
-  //     this.categoryId
-  //   );
-  //   this.getCategories();
-  // }
-  // searchProduct() {
-  //   this.getProducts(
-  //     this.currentPage,
-  //     this.limit,
-  //     this.keyword,
-  //     this.categoryId
-  //   );
-  // }
-  // getProducts(
-  //   page: number,
-  //   limit: number,
-  //   keyword: string,
-  //   categoryId: number
-  // ) {
-  //   this.productService
-  //     .getProducts(page, limit, keyword, categoryId)
-  //     .subscribe({
-  //       next: (respone: any) => {
-  //         respone.products.forEach((products: ProductResponse) => {
-  //           products.thumbnail = `${enviroment.apiBaseUrl}/products/images/${products.thumbnail}`;
-  //         });
-  //         this.products = respone.products;
-  //         this.totalsPages = respone.total_pages;
-  //         // debugger;
-  //         this.visiblePages = this.generateVisiblePageArray(
-  //           this.currentPage,
-  //           this.totalsPages
-  //         );
-  //       },
-  //       complete: () => {},
-  //       error: (error: any) => {
-  //         console.log(error);
-  //       },
-  //     });
-  // }
-  // getCategories() {
-  //   this.categoryService.getCategories().subscribe({
-  //     next: (response: any) => {
-  //       this.categories = response;
-  //     },
-  //     complete: () => {},
-  //     error: (error: any) => {
-  //       console.log(error);
-  //     },
-  //   });
-  // }
-  // onPageChange(page: number) {
-  //   this.currentPage = page;
-  //   this.getProducts(
-  // this.currentPage,
-  // this.limit,
-  // this.keyword,
-  // this.categoryId
-  //   );
-  // }
-  // generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
-  //   const maxVisiblePage = 5;
-  //   const halfVisiblePage = Math.floor(maxVisiblePage / 2);
-
-  //   let startPage = Math.max(currentPage - halfVisiblePage, 1);
-  //   let endPage = Math.min(startPage + maxVisiblePage - 1, totalPages);
-
-  //   if (endPage - startPage + 1 < maxVisiblePage) {
-  //     startPage = Math.max(endPage - maxVisiblePage + 1, 1);
-  //   }
-
-  //   // Đảm bảo startPage và endPage là các giá trị hợp lệ
-  //   if (startPage < 1) startPage = 1;
-  //   if (endPage > totalPages) endPage = totalPages;
-
-  //   // Tính toán độ dài của mảng, đảm bảo nó là một giá trị hợp lệ
-  //   const length = endPage - startPage + 1;
-  //   if (length <= 0) return [];
-
-  //   return new Array(length).fill(0).map((_, index) => startPage + index);
-  // }
-  // onKeywordChange(event: Event) {
-  //   const element = event.target as HTMLSelectElement;
-  //   this.keyword = element.value;
-  //   console.log(this.keyword);
-  // }
-  // onCategoryChange(event: Event) {
-  //   const element = event.target as HTMLSelectElement;
-  //   this.categoryId = Number(element.selectedOptions[0].id);
-  //   console.log(this.categoryId);
-  // }
+  viewAllOrders() {
+    this.router.navigate(['/thong-tin-ca-nhan/thong-tin-don-hang']);
+  }
+  viewProductByCategory(id: number) {
+    this.router.navigate(['/san-pham'], { state: { categoryId: id } });
+  }
 }

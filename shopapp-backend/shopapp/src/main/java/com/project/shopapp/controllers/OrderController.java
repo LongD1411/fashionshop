@@ -1,76 +1,69 @@
 package com.project.shopapp.controllers;
 
 import com.project.shopapp.componens.LocalizationUtils;
-import com.project.shopapp.dtos.OrderDTO;
-import com.project.shopapp.entities.Order;
-import com.project.shopapp.respone.OrderResponese;
+import com.project.shopapp.dtos.request.OrderDTO;
+import com.project.shopapp.dtos.respone.ApiResponse;
+import com.project.shopapp.dtos.respone.OrderResponese;
+import com.project.shopapp.dtos.respone.ProductResponse;
 import com.project.shopapp.services.IOrderService;
-import com.project.shopapp.services.impls.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "${api.prefix}/orders")
+@RequestMapping(value = "${api.prefix}")
 @RequiredArgsConstructor
 public class OrderController {
     private final IOrderService orderService;
     private final LocalizationUtils localizationUtils;
-    @PostMapping("")
-    public ResponseEntity<?> createOrder(@Valid @RequestBody OrderDTO orderDTO, BindingResult result) {
-        try {
-            if (result.hasErrors()) {
-                List<String> messages = result.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
-                return ResponseEntity.badRequest().body(messages);
-            }
-            OrderResponese  orderResponese = orderService.createOrder(orderDTO);
-            return ResponseEntity.ok(orderResponese);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+
+    @PostMapping("/order")
+    public ApiResponse<OrderResponese> createOrder(@Valid @RequestBody OrderDTO orderDTO) {
+        OrderResponese orderResponese = orderService.createOrder(orderDTO);
+        return ApiResponse.<OrderResponese>builder().result(orderResponese).build();
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<?> getOrders(@RequestParam("id") Long userId) {
-        try {
-            List<OrderResponese> orders = orderService.findByUserId(userId);
-            return ResponseEntity.ok(orders);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping("/order/user")
+    public ApiResponse<OrderResponese> getOrders() {
+        List<OrderResponese> orders = orderService.findByUserId();
+        return ApiResponse.<OrderResponese>builder().results(orders).build();
     }
-    @GetMapping("/{orderId}")
-    public ResponseEntity<?> getOrder(@Valid @PathVariable("orderId") Long orderId) {
-        try {
-            OrderResponese existingOrder = orderService.getOrder(orderId);
-            return ResponseEntity.ok(existingOrder);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    @GetMapping("/orders")
+    public ApiResponse<OrderResponese> getOrderPage(@RequestParam(value = "page", required = false, defaultValue = "1") int page,
+                                                    @RequestParam(value = "limit", required = false, defaultValue = "10") int limit,
+                                                    @RequestParam(value="keyword", required = false, defaultValue = "") String keyword){
+        PageRequest pageRequest = PageRequest.of(page -1, limit, Sort.by("createdAt").descending());
+        Page<OrderResponese> orderPage = orderService.getAllOrders(pageRequest,keyword);
+
+        return ApiResponse.<OrderResponese>builder().results(orderPage.getContent())
+                .totalItem(orderPage.getNumberOfElements())
+                .totalPage(orderPage.getTotalPages())
+                .build();
+    }
+    @GetMapping("/order")
+    public ApiResponse<OrderResponese> getOrderById(@RequestParam("id") Long orderId) {
+        OrderResponese existingOrder = orderService.getOrder(orderId);
+        return ApiResponse.<OrderResponese>builder().result(existingOrder).build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/order")
     // admin
-    public ResponseEntity<?> updateCategory(@Valid @PathVariable Long id,
-                                            @Valid @RequestBody OrderDTO orderDTO) {
-       try{
-          OrderResponese orderResponese = orderService.updateOrder(id,orderDTO);
-           return ResponseEntity.ok(orderResponese);
-       }catch (Exception e){
-           return ResponseEntity.badRequest().body(e.getMessage());
-       }
+    public ApiResponse<OrderResponese> updateOrder(@RequestParam("id") Long id,
+                                                   @RequestParam("status") String status) {
+        OrderResponese orderResponese = orderService.updateOrder(id, status);
+        return ApiResponse.<OrderResponese>builder().result(orderResponese).build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> updateCategory(@Valid @PathVariable Long id) {
+    @DeleteMapping("/order")
+    public ApiResponse<Void> deleteOrder(@Valid @RequestParam("id") Long id) {
         orderService.deleteOrder(id);
-        return ResponseEntity.ok("delete request success id: " + id);
+        return ApiResponse.<Void>builder().message("Xoa thanh cong order id " + id).build();
     }
 
 }

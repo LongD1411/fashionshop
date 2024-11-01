@@ -7,25 +7,23 @@
         <span style="margin-left: 5px">Thêm</span>
       </div>
     </div>
-    <table class="table">
+    <table class="table text-center">
       <thead>
-        <tr style="text-align: center">
+        <tr>
           <th scope="col">#</th>
           <th scope="col">Ảnh category</th>
           <th scope="col">Tiêu đề</th>
-          <th scope="col">Mô tả</th>
           <th scope="col">Tùy chọn</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let category of categories, let i = index">
+        <tr class="" *ngFor="let category of categories, let i = index">
           <th scope="row">{{i+1}}</th>
           <td>
-            <img *ngIf="category.thumbnail" style="margin-left: 20px; height: 150px" [src]="category.thumbnail"/>
-            <div *ngIf="!category.thumbnail" style="text-align: center;">Chưa có ảnh</div>
+            <img *ngIf="category.thumbnail" style="height: 150px" [src]="category.thumbnail"/>
+            <div *ngIf="!category.thumbnail">Chưa có ảnh</div>
           </td>
-          <td><div style="text-align: left; margin-left: 100px;">{{category.name}}</div></td>
-          <td>...</td>
+          <td><div style="">{{category.name}}</div></td>
           <td>
             <input class="btn btn-primary btn-sm mr-1"  type="button" value="Sửa" (click)="updateNavigate(category.id)" />
             <input class="btn btn-danger btn-sm" type="button" (click)="deleteCategory(category.id)" value="Xóa" />

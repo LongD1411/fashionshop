@@ -10,6 +10,7 @@ import {
 import { FooterComponent } from './components/footer/footer.component';
 import { HeaderComponent } from './components/header/header.component';
 import { PopupComponent } from './components/popup/popup.component';
+import { CurrencyService } from './service/currency.service';
 
 @Component({
   selector: 'app-root',

@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping(value = "${api.prefix}/resources")
+@RequestMapping(value = "${api.prefix}/")
 public class ResourcesController {
-    @GetMapping("image/{imageName}")
+    @GetMapping("/public/image/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName){
         try{
             java.nio.file.Path imgaePath = Paths.get("uploadDir/" +imageName);

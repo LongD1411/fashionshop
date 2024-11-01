@@ -1,27 +1,29 @@
 package com.project.shopapp.services.impls;
 
-import com.project.shopapp.dtos.*;
+import com.project.shopapp.dtos.request.CartItemDTO;
+import com.project.shopapp.dtos.request.OrderDTO;
+import com.project.shopapp.dtos.respone.OrderDetailResponse;
+import com.project.shopapp.dtos.respone.OrderResponese;
+import com.project.shopapp.dtos.respone.ProductResponse;
 import com.project.shopapp.entities.*;
-import com.project.shopapp.exceptions.DataNotFoundException;
+import com.project.shopapp.exceptions.AppException;
+import com.project.shopapp.exceptions.ErrorCode;
+import com.project.shopapp.mapper.OrderMapper;
 import com.project.shopapp.repositories.*;
-import com.project.shopapp.respone.OrderDetailResponse;
-import com.project.shopapp.respone.OrderResponese;
 import com.project.shopapp.services.IOrderService;
 import com.project.shopapp.statics.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,34 +35,31 @@ public class OrderService implements IOrderService {
     private final ModelMapper modelMapper;
     private final OrderDetailService orderDetailService;
     private final SizeRepository sizeRepository;
+    private final OrderMapper orderMapper;
 
     @Override
-    @Transactional(rollbackFor = DataNotFoundException.class)
-    public OrderResponese createOrder(OrderDTO orderDTO) throws Exception {
-        User user = userRepository.findById(orderDTO.getUserId())
-                .orElseThrow(() -> new DataNotFoundException("Cannot find user with id :" + orderDTO.getUserId()));
-        modelMapper.typeMap(OrderDTO.class, Order.class)
-                .addMappings(mapper -> {
-                    mapper.skip(Order::setId);
-                });
-        Order order = new Order();
-        modelMapper.map(orderDTO, order);
+    @Transactional(rollbackFor = AppException.class)
+    public OrderResponese createOrder(OrderDTO orderDTO){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        Order order = orderMapper.toOrderEntity(orderDTO);
         order.setUser(user);
         order.setOrderDate(new Date());
         order.setStatus(OrderStatus.PENDING);
+        order.setShippingAddress(orderDTO.getShippingAddress());
 //        LocalDate shippingDate = orderDTO.getShippingDate() == null ? LocalDate.now() : orderDTO.getShippingDate();
 //        if (shippingDate.isBefore(LocalDate.now())) {
 //            throw new DataNotFoundException("Date must be at least today");
 //        }
 //        order.setShippingDate(shippingDate);
-        order.setActive(true);
         orderRepository.save(order);
         List<OrderDetail> orderDetails = new ArrayList<>();
+        int totalMoney = 0;
         for (CartItemDTO cartItemDTO : orderDTO.getCartItemDTOS()) {
             OrderDetail orderDetail = new OrderDetail();
             orderDetail.setOrder(order);
-            Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId()));
-            Size size = sizeRepository.findById(cartItemDTO.getSizeId()).orElseThrow(() -> new DataNotFoundException("Id not found: " + cartItemDTO.getProductId()));
+            Product product = productRepository.findById(cartItemDTO.getProductId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
+            Size size = sizeRepository.findById(cartItemDTO.getSizeId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
             orderDetail.setProduct(product);
             orderDetail.setSize(size);
             orderDetail.setPrice(product.getPrice());
@@ -68,7 +67,10 @@ public class OrderService implements IOrderService {
             orderDetail.setQuantity(cartItemDTO.getQuantity());
             orderDetail.setTotalMoney(product.getPrice() * cartItemDTO.getQuantity());
             orderDetails.add(orderDetail);
+            totalMoney += product.getPrice() * cartItemDTO.getQuantity();
         }
+        order.setTotalMoney(totalMoney);
+        orderRepository.save(order);
         List<OrderDetail> orderDetailList = orderDetailRepository.saveAll(orderDetails);
         OrderResponese orderResponese = modelMapper.map(order, OrderResponese.class);
         List<OrderDetailResponse> orderDetailResponseList = new ArrayList<>();
@@ -82,8 +84,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public OrderResponese getOrder(Long id) throws Exception {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Cannot find user with id :" + id));
+    public OrderResponese getOrder(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
         OrderResponese orderResponese = new OrderResponese();
         modelMapper.typeMap(Order.class, OrderResponese.class).map(order, orderResponese);
         List<OrderDetailResponse> orderDetailResponseList = orderDetailService.findByOrderId(orderResponese.getId());
@@ -92,11 +94,17 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public OrderResponese updateOrder(Long id, OrderDTO orderDTO) throws Exception {
-        Order order = orderRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Cannot find order with id :" + id));
-        User user = userRepository.findById(orderDTO.getUserId()).orElseThrow(() -> new DataNotFoundException("Cannot user order with id :" + id));
-        modelMapper.typeMap(OrderDTO.class, Order.class);
-        modelMapper.map(orderDTO, order);
+    public OrderResponese updateOrder(Long id, String  status){
+        Order order = orderRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_EXISTED));
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        if(status != null){
+            if (isValidStatus(status)) {
+                order.setStatus(status);
+            }else{
+                throw  new AppException(ErrorCode.MISSING_FORMATTED_DATA);
+            }
+        }
         orderRepository.save(order);
         OrderResponese orderResponese = new OrderResponese();
         modelMapper.typeMap(Order.class, OrderResponese.class);
@@ -108,14 +116,16 @@ public class OrderService implements IOrderService {
     public void deleteOrder(Long id) {
         Order order = orderRepository.findById(id).orElse(null);
         if (order != null) {
-            order.setActive(false);
+            order.setStatus(OrderStatus.CANCELLED);
             orderRepository.save(order);
         }
     }
 
     @Override
-    public List<OrderResponese> findByUserId(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+    public List<OrderResponese> findByUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+        List<Order> orders = orderRepository.findByUserId(user.getId());
         List<OrderResponese> orderResponese = new ArrayList<>();
         modelMapper.typeMap(Order.class, OrderResponese.class);
         for (Order order : orders) {
@@ -124,5 +134,17 @@ public class OrderService implements IOrderService {
             orderResponese.add(orderResponese1);
         }
         return orderResponese;
+    }
+
+    @Override
+    public Page<OrderResponese> getAllOrders(PageRequest pageRequest, String keyword) {
+        Page<Order> orders = orderRepository.searchOrders(pageRequest,keyword);
+        return orders.map(orderMapper::toOrderResponse);
+    }
+
+    private boolean isValidStatus(String status) {
+        return status.equals(OrderStatus.PENDING) || status.equals(OrderStatus.PROCESSING) ||
+                status.equals(OrderStatus.SHIPPED) || status.equals(OrderStatus.DELIVERED) ||
+                status.equals(OrderStatus.CANCELLED);
     }
 }

@@ -1,5 +1,6 @@
 package com.project.shopapp.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -64,8 +65,8 @@ public class Order extends BaseEntity {
     @Column(name = "payment_method")
     private String paymentMethod;
 
-    @Column(name = "active")
-    private Boolean active;
-
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<OrderDetail> orderDetails;
 
 }

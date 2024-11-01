@@ -41,11 +41,11 @@
                 }" formControlName="phone_number" />
             </div>
             <div class="col-md-6 form-group">
-              <label>Địa chỉ</label>
+              <label>Địa chỉ nhận hàng</label>
               <input class="form-control" type="text" [ngClass]="{
-                  'is-valid': orderForm.get('address')?.valid && (orderForm.get('address')?.touched || orderForm.get('address')?.dirty),
-                  'is-invalid': !orderForm.get('address')?.valid && (orderForm.get('address')?.touched || orderForm.get('address')?.dirty)  
-                }" formControlName="address" />
+                  'is-valid': orderForm.get('shipping_address')?.valid && (orderForm.get('shipping_address')?.touched || orderForm.get('shipping_address')?.dirty),
+                  'is-invalid': !orderForm.get('shipping_address')?.valid && (orderForm.get('shipping_address')?.touched || orderForm.get('shipping_address')?.dirty)  
+                }" formControlName="shipping_address" />
             </div>
             <div class="col-md-6 form-group">
               <label>Ghi chú</label>
@@ -78,23 +78,23 @@
           <ng-container *ngFor="let item of localProduct">
             <div class="d-flex justify-content-between">
               <p>{{item.product.name}}</p>
-              <p>{{item.product.price}} VNĐ</p>
+              <p>{{currency.formatCurrency(item.product.price)}} x {{item.quantity}}</p>
             </div>
           </ng-container>
           <hr class="mt-0" />
           <div class="d-flex justify-content-between">
             <h6 class="font-weight-medium">Phí ship</h6>
-            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">10 VNĐ</h6>
+            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">{{currency.formatCurrency(20000)}}</h6>
           </div>
           <div class="d-flex justify-content-between mb-3 pt-1">
             <h6 class="font-weight-medium">Tổng sản phẩm</h6>
-            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">{{getTotal()}} VNĐ</h6>
+            <h6 *ngIf="localProduct.length >0" class="font-weight-medium">{{currency.formatCurrency(getTotal())}}</h6>
           </div>
         </div>
         <div class="card-footer border-secondary bg-transparent">
           <div class="d-flex justify-content-between mt-2">
             <h5 class="font-weight-bold">Tổng cộng</h5>
-            <h5 *ngIf="localProduct.length >0" class="font-weight-bold">{{getTotal()+10}} VNĐ</h5>
+            <h5 *ngIf="localProduct.length >0" class="font-weight-bold">{{currency.formatCurrency(getTotal()+20000)}}</h5>
           </div>
         </div>
       </div>
@@ -106,17 +106,17 @@
           <div class="form-group">
             <div class="custom-control custom-radio">
               <input type="radio" class="custom-control-input" name="shipping_method" formControlName="shipping_method"
+                value="Viettel Post" id="Viettel Post" />
+              <label class="custom-control-label" for="Viettel Post">Viettel Post</label>
+            </div>
+          </div>
+          <!-- <div class="form-group">
+            <div class="custom-control custom-radio">
+              <input type="radio" class="custom-control-input" name="shipping_method" formControlName="shipping_method"
                 value="express" id="express" />
               <label class="custom-control-label" for="express">Nhanh</label>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="custom-control custom-radio">
-              <input type="radio" class="custom-control-input" name="shipping_method" formControlName="shipping_method"
-                value="normal" id="normal" />
-              <label class="custom-control-label" for="normal">Thường</label>
-            </div>
-          </div>
+          </div> --> 
         </div>
       </div>
       <div class="card border-secondary mb-5">
@@ -132,19 +132,19 @@
             </div>
           </div>
           <div class="form-group">
-            <div class="custom-control custom-radio">
+            <!-- <div class="custom-control custom-radio">
               <input type="radio" class="custom-control-input" name="payment_method" formControlName="payment_method"
                 value="bank_transfer" id="bank_transfer" />
               <label class="custom-control-label" for="bank_transfer">Chuyển khoản ngân hàng</label>
-            </div>
+            </div> -->
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <div class="custom-control custom-radio">
               <input type="radio" class="custom-control-input" name="payment_method" formControlName="payment_method"
                 value="momo" id="momo" />
               <label class="custom-control-label" for="momo">Momo</label>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="card-footer border-secondary bg-transparent">
           <button [disabled]="orderForm.invalid" (click)="submitHandler()"

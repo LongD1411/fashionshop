@@ -45,7 +45,7 @@ export class BannerEditComponent implements OnInit {
     if (this.bannerId) {
       this.category.getBanner(this.bannerId).subscribe({
         next: (response) => {
-          this.banner = response;
+          this.banner = response.result;
           this.banner.thumbnail = `${enviroment.apiImage}/${this.banner.thumbnail}`;
           //load du lieu len man hinh
           this.bannerForm.patchValue({
@@ -83,8 +83,14 @@ export class BannerEditComponent implements OnInit {
     }
     this.categoryService.createBanner(formData).subscribe({
       next: (response) => {
-        this.router.navigate(['quan-ly/banner/edit']);
-        this.alert.showSuccess('Tạo thành công');
+        this.router.navigate(['quan-ly/banner/edit'], {
+          queryParams: { id: response.result.id },
+        });
+        this.alert.showSuccess('Tạo thành công').then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          }
+        });
       },
       error: (response) => {
         this.alert.showError('Không tạo được');

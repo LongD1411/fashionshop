@@ -23,7 +23,7 @@ export class CategoryComponent implements OnInit {
   ngOnInit(): void {
     this.categoryService.getCategories().subscribe({
       next: (response) => {
-        this.categories = response;
+        this.categories = response.results;
         this.categories.map((item) => {
           if (item.thumbnail) {
             item.thumbnail = `${enviroment.apiImage}/${item.thumbnail}`;

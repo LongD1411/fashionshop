@@ -14,7 +14,6 @@
                 <th scope="col">id</th>
                 <th scope="col">Ảnh sản phẩm</th>
                 <th scope="col">Tên sản phẩm</th>
-                <th scope="col">Mô tả</th>
                 <th scope="col">Giá mới</th>
                 <th scope="col">Giá cũ</th>
                 <th scope="col">Tùy chọn</th>
@@ -31,24 +30,18 @@
                 <td>
                     <div style="text-align: left; margin-left: 40px">{{product.name}}</div>
                 </td>
+              
                 <td>
-                    <div style="text-align: left; margin-left: 40px">{{product.description}}</div>
+                    <div style="text-align: left; margin-left: 40px">{{currency.formatCurrency(product.price)}}</div>
                 </td>
                 <td>
-                    <div style="text-align: left; margin-left: 40px">{{product.price}}</div>
-                </td>
-                <td>
-                    <div style="text-align: left; margin-left: 40px">{{product.old_price}}</div>
+                    <div style="text-align: left; margin-left: 40px">{{currency.formatCurrency(product.old_price)}}</div>
                 </td>
                 <td>
                     <div style="display: flex; justify-content: center; align-items: center">
                         <input class="btn btn-primary btn-sm mr-1" type="button" (click)="updateProduct(product.id)" value="Sửa" />
                         <input class="btn btn-danger btn-sm" type="button" (click)="deleteProduct(product.id)" value="Xóa" />
                     </div>
-                </td>
-
-                <td>
-                    <input style="margin-left: 20px" type="checkbox" />
                 </td>
             </tr>
         </tbody>

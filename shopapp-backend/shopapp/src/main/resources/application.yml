@@ -9,7 +9,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     properties:
       hibernate:
       dialect: org.hibernate.MySQL8Dialect
@@ -23,7 +23,7 @@ spring:
     encoding: UTF-8
     default-locale: en
 api:
-  prefix: api/v1
+  prefix:   api/v1
 jwt:
   expiration: 3600 # = 1h
-  secretKey: XHAff6VzAm1XzbTt3EQ9B4hblwsyxs9OIsUwZKFfAzo=
+  secretKey: ZFc1ERqGYrHyrz0+ymwNaLUiNL6IpvTSRVlMIhXiw3V1V6HUxQEMCpRJZ9o5519l

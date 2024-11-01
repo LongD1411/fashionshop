@@ -21,6 +21,10 @@ import { ProductEditComponent } from './admin/product/product.edit.component';
 import { UserComponent } from './admin/user/user.component';
 import { UserEditComponent } from './admin/user/user.edit.component';
 import { UserOrderComponent } from './components/user.order/user.order.component';
+import { AuthGuard } from './guards/auth.guard';
+import { AdminHomeComponent } from './admin/home/home.component';
+import { OrderComponentAdmin } from './admin/order/order.component';
+import { OrderEditComponent } from './admin/order/order.edit.component';
 
 export const routes: Routes = [
   {
@@ -68,7 +72,20 @@ export const routes: Routes = [
   {
     path: 'quan-ly',
     component: AdminComponent,
+    canActivate:[AuthGuard],
     children: [
+      {
+        path: 'trang-chu',
+        component: AdminHomeComponent ,
+      },
+      {
+        path: 'don-hang',
+        component: OrderComponentAdmin ,
+      },
+      {
+        path: 'don-hang/edit',
+        component: OrderEditComponent ,
+      },
       {
         path: 'size',
         component: SizeComponent,
@@ -94,11 +111,11 @@ export const routes: Routes = [
         component: CategoryEditComponent,
       },
       {
-        path: 'product',
+        path: 'san-pham',
         component: AdminProductComponent,
       },
       {
-        path: 'product/edit',
+        path: 'san-pham/edit',
         component: ProductEditComponent,
       },
       {

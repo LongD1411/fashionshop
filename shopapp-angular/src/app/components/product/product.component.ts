@@ -4,14 +4,17 @@ import { ProductService } from '../../service/product.service';
 import { CommonModule } from '@angular/common';
 import { ProductResponse } from '../../responses/product/product.response';
 import { enviroment } from '../../enviroments/enviroment';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../service/cart.service';
+import { CurrencyService } from '../../service/currency.service';
+import { CategoryService } from '../../service/category.service';
+import { CategoryResponse } from '../../responses/category/category.respones';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,FormsModule],
   templateUrl: './product.component.html',
 })
 export class ProductComponent implements OnInit {
@@ -24,28 +27,33 @@ export class ProductComponent implements OnInit {
   keyword: string = '';
   categoryId: number = 0;
   products: ProductResponse[] = [];
+  categories: CategoryResponse[]=[];
+  
   constructor(
     private productService: ProductService,
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService,
+    public currency:CurrencyService,
+    private categoryService:CategoryService
   ) {}
   ngOnInit(): void {
+    if(history.state.categoryId){
+      this.categoryId = history.state.categoryId;
+    }
     this.getProducts(
       this.currentPage,
       this.limit,
       this.keyword,
       this.categoryId
     );
-    this.productService.getAllSize().subscribe({
-      next: (response) => {
-        this.sizes = response;
-        console.log(this.sizes);
+    this.categoryService.getCategories().subscribe({
+      next:(response)=>{
+        this.categories = response.results;
       },
-      error: (error) => {
-        console.log(error);
-      },
-      complete: () => {},
-    });
+      error: (error)=>{
+
+      }
+    })
   }
 
   changePage(page: number): void {
@@ -91,11 +99,11 @@ export class ProductComponent implements OnInit {
       .getProducts(page, limit, keyword, categoryId)
       .subscribe({
         next: (respone: any) => {
-          respone.products.forEach((products: ProductResponse) => {
+          respone.results.forEach((products: ProductResponse) => {
             products.thumbnail = `${enviroment.apiImage}/${products.thumbnail}`;
           });
-          this.products = respone.products;
-          this.totalsPages = respone.total_pages;
+          this.products = respone.results;
+          this.totalsPages = respone.totalPage;
           this.visiblePages = this.generateVisiblePageArray(
             this.currentPage,
             this.totalsPages
@@ -111,10 +119,23 @@ export class ProductComponent implements OnInit {
     const element = event.target as HTMLSelectElement;
     this.keyword = element.value;
   }
+
   viewProductDetails(productId: number) {
-    this.router.navigate(['/chi-tiet-san-pham', productId]);
+    this.router.navigate(['/chi-tiet-san-pham'],{queryParams: {id:productId}});
   }
   searchProduct() {
+    this.getProducts(
+      this.currentPage,
+      this.limit,
+      this.keyword,
+      this.categoryId
+    );
+  }
+  onStatusChange(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedValue = selectElement.value;
+
+    this.categoryId = Number(selectedValue);
     this.getProducts(
       this.currentPage,
       this.limit,

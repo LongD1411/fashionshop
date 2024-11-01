@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { enviroment } from '../../enviroments/enviroment';
 import { SweetAlertService } from '../../service/sweet-alert.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { CurrencyService } from '../../service/currency.service';
 
 @Component({
   selector: 'app-product',
@@ -26,9 +27,13 @@ export class AdminProductComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private router: Router,
-    private alert: SweetAlertService
+    private alert: SweetAlertService,
+    public currency: CurrencyService
   ) {}
   ngOnInit(): void {
+    if(history.state.categoryId){
+      this.categoryId = history.state.categoryId;
+    }
     this.getProducts(
       this.currentPage,
       this.limit,
@@ -46,12 +51,12 @@ export class AdminProductComponent implements OnInit {
     this.productService
       .getProducts(page, limit, keyword, categoryId)
       .subscribe({
-        next: (respone: any) => {
-          respone.products.forEach((products: ProductResponse) => {
+        next: (respone) => {
+          respone.results.forEach((products: ProductResponse) => {
             products.thumbnail = `${enviroment.apiImage}/${products.thumbnail}`;
           });
-          this.products = respone.products;
-          this.totalsPages = respone.total_pages;
+          this.products = respone.results;
+          this.totalsPages = respone.totalPage;
           this.visiblePages = this.generateVisiblePageArray(
             this.currentPage,
             this.totalsPages
@@ -91,10 +96,10 @@ export class AdminProductComponent implements OnInit {
     }
   }
   createProduct() {
-    this.router.navigate(['quan-ly/product/edit']);
+    this.router.navigate(['quan-ly/san-pham/edit']);
   }
   updateProduct(id: number) {
-    this.router.navigate(['quan-ly/product/edit'], { queryParams: { id } });
+    this.router.navigate(['quan-ly/san-pham/edit'], { queryParams: { id } });
   }
   deleteProduct(id: number) {
     this.alert.showConfirm('Cảnh báo', 'Chắc chắn xóa?').then((result) => {
