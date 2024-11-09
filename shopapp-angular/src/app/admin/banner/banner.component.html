@@ -3,7 +3,7 @@
     <!-- size home -->
     <div class="container">
       <div style="display: flex; justify-content: space-between">
-        <div>Danh sách banner</div>
+        <h3>Danh sách banner</h3>
         <div style="cursor: pointer" (click)="createBanner()">
           <i class="fa-solid fa-plus"></i>
           <span style="margin-left: 5px">Thêm</span>
@@ -40,9 +40,6 @@
                 (click)="deleteBanner(banner.id)"
                 value="Xóa"
               />
-            </td>
-            <td>
-              <input style="margin-left: 20px" type="checkbox" />
             </td>
           </tr>
         </tbody>

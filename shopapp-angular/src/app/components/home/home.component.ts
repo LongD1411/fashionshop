@@ -86,23 +86,27 @@ export class HomeComponent {
     });
   }
   logout() {
-    var token = this.tokenService.getToken();
-    if (token) {
-      const data = new AuthDTO(token);
-      this.authService.logout(data).subscribe({
-        next: (response) => {
-          localStorage.removeItem('access_token');
+    this.alert.showConfirm('Cảnh báo', 'Xác nhận đăng xuất').then((result) => {
+      if (result.isConfirmed) {
+        var token = this.tokenService.getToken();
+        if (token) {
+          const data = new AuthDTO(token);
+          this.authService.logout(data).subscribe({
+            next: (response) => {
+              localStorage.removeItem('access_token');
+              this.router.navigate(['dang-nhap']);
+              this.alert.showSuccess('Đăng xuất thành công');
+            },
+            error: (error) => {
+              this.alert.showError('Đã xảy ra lỗi');
+              console.log(error);
+            },
+          });
+        } else {
           this.router.navigate(['dang-nhap']);
-          this.alert.showSuccess('Đăng xuất thành công');
-        },
-        error: (error) => {
-          this.alert.showError('Đã xảy ra lỗi');
-          console.log(error);
-        },
-      });
-    } else {
-      this.router.navigate(['dang-nhap']);
-    }
+        }
+      }
+    });
   }
   viewAllOrders() {
     this.router.navigate(['/thong-tin-ca-nhan/thong-tin-don-hang']);

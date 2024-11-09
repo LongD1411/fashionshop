@@ -15,7 +15,7 @@ import java.util.List;
 public interface IProductService {
     Product createProduct(ProductDTO productDTO, MultipartFile file,MultipartFile[] files) throws IOException;
     ProductResponse getProduct(Long id);
-    Page<ProductResponse> getAllProducts(String keyword, Long categoryId,PageRequest pageRequest);
+    Page<ProductResponse> getAllProducts(String keyword, Long categoryId,PageRequest pageRequest,Long minPrice,Long maxPrice);
     Product updateProduct(long id, ProductDTO productDTO,MultipartFile thumbnail,MultipartFile[] detail_images) throws IOException;
     void deleteProduct(long id) throws IOException;
     boolean existsByName(String name);

@@ -10,12 +10,15 @@ import { CartService } from '../../service/cart.service';
 import { CurrencyService } from '../../service/currency.service';
 import { CategoryService } from '../../service/category.service';
 import { CategoryResponse } from '../../responses/category/category.respones';
+import { NgxSliderModule, Options } from '@angular-slider/ngx-slider';
+import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-product',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule,FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NgxSliderModule],
   templateUrl: './product.component.html',
+  styleUrl: './product.component.css',
 })
 export class ProductComponent implements OnInit {
   sizes: Size[] = [];
@@ -27,33 +30,34 @@ export class ProductComponent implements OnInit {
   keyword: string = '';
   categoryId: number = 0;
   products: ProductResponse[] = [];
-  categories: CategoryResponse[]=[];
-  
+  categories: CategoryResponse[] = [];
+  minValue: number = 0;
+  maxValue: number = 10000000;
   constructor(
     private productService: ProductService,
     private router: Router,
     private cartService: CartService,
-    public currency:CurrencyService,
-    private categoryService:CategoryService
+    public currency: CurrencyService,
+    private categoryService: CategoryService
   ) {}
   ngOnInit(): void {
-    if(history.state.categoryId){
+    if (history.state.categoryId) {
       this.categoryId = history.state.categoryId;
     }
     this.getProducts(
       this.currentPage,
       this.limit,
       this.keyword,
-      this.categoryId
+      this.categoryId,
+      this.minValue,
+      this.maxValue
     );
     this.categoryService.getCategories().subscribe({
-      next:(response)=>{
+      next: (response) => {
         this.categories = response.results;
       },
-      error: (error)=>{
-
-      }
-    })
+      error: (error) => {},
+    });
   }
 
   changePage(page: number): void {
@@ -63,7 +67,9 @@ export class ProductComponent implements OnInit {
         this.currentPage,
         this.limit,
         this.keyword,
-        this.categoryId
+        this.categoryId,
+        this.minValue,
+        this.maxValue
       );
     }
   }
@@ -93,10 +99,16 @@ export class ProductComponent implements OnInit {
     page: number,
     limit: number,
     keyword: string,
-    categoryId: number
+    categoryId: number,
+    minValue: number,
+    maxValue: number
   ) {
+    if (minValue == 0 && maxValue == 10000000) {
+      minValue = 0;
+      maxValue = 1000000000;
+    }
     this.productService
-      .getProducts(page, limit, keyword, categoryId)
+      .getProducts(page, limit, keyword, categoryId, minValue, maxValue)
       .subscribe({
         next: (respone: any) => {
           respone.results.forEach((products: ProductResponse) => {
@@ -121,14 +133,18 @@ export class ProductComponent implements OnInit {
   }
 
   viewProductDetails(productId: number) {
-    this.router.navigate(['/chi-tiet-san-pham'],{queryParams: {id:productId}});
+    this.router.navigate(['/chi-tiet-san-pham'], {
+      queryParams: { id: productId },
+    });
   }
   searchProduct() {
     this.getProducts(
       this.currentPage,
       this.limit,
       this.keyword,
-      this.categoryId
+      this.categoryId,
+      this.minValue,
+      this.maxValue
     );
   }
   onStatusChange(event: Event) {
@@ -140,7 +156,18 @@ export class ProductComponent implements OnInit {
       this.currentPage,
       this.limit,
       this.keyword,
-      this.categoryId
+      this.categoryId,
+      this.minValue,
+      this.maxValue
     );
   }
+  sliderOptions: Options = {
+    floor: this.minValue,
+    ceil: this.maxValue,
+    step: 1,
+    showTicksValues: false,
+    showSelectionBar: true,
+    hideLimitLabels: true,
+    hidePointerLabels: true,
+  };
 }

@@ -1,7 +1,7 @@
 <!-- size home -->
 <div class="container">
   <div style="display: flex; justify-content: space-between">
-    <div>Danh sách size</div>
+    <h3>Danh sách size</h3>
     <div style="cursor: pointer" (click)="createSizeNavigate()">
       <i class="fa-solid fa-plus"></i>
       <span style="margin-left: 5px">Thêm</span>
@@ -14,7 +14,6 @@
         <th scope="col">Size name</th>
         <th scope="col">Size code</th>
         <th scope="col">Tùy chọn</th>
-        <th scope="col">Chọn nhanh</th>
       </tr>
     </thead>
     <tbody>
@@ -35,9 +34,6 @@
             (click)="remove(size.id)"
             value="Xóa"
           />
-        </td>
-        <td>
-          <input style="margin-left: 20px" type="checkbox" />
         </td>
       </tr>
     </tbody>

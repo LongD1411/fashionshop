@@ -9582,13 +9582,15 @@ a.text-dark:hover, a.text-dark:focus {
     transform: translateY(-15px);
   }
 }
+.user-nav{
+  margin-right:60px ;
+}
 .user-nav-2 {
     display: none; /* Ẩn danh sách mặc định */
     position: absolute; /* Đảm bảo danh sách hiển thị gần user-nav */
     background-color: white; /* Màu nền của danh sách */
     z-index: 20; 
     width: 200px;
-    margin-left: -50px;
 }
 
 .user-nav:hover .user-nav-2{

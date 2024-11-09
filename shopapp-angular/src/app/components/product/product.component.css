@@ -1,0 +1,23 @@
+.ngx-slider {
+    background-color: #f5f5f5 !important; /* Màu nền của thanh trượt */
+  }
+  
+  .ngx-slider .slider-track {
+    background-color: #ddd !important; /* Màu đường ray */
+  }
+  
+  .ngx-slider .slider-selection {
+    background-color: #4caf50 !important; /* Màu phần đã chọn */
+  }
+  
+  .ngx-slider .slider-handle {
+    background-color: #fff !important; /* Màu tay cầm */
+    border: 2px solid #4caf50 !important; /* Đường viền tay cầm */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important; /* Bóng đổ cho tay cầm */
+  }
+  
+  .ngx-slider .slider-handle:hover {
+    background-color: #4caf50 !important; /* Màu tay cầm khi di chuột */
+    border: 2px solid #fff !important; /* Đường viền tay cầm khi di chuột */
+  }
+  

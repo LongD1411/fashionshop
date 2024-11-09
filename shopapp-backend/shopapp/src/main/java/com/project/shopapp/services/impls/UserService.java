@@ -50,11 +50,9 @@ public class UserService implements IUserService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
         user.setRoles(roles);
-        if (userDTO.getFacebookAccountId() == null && userDTO.getGoogleAccountId() == null) {
-            String password = userDTO.getPassword();
-            String encodedPassword = passwordEncoder.encode(password);
-            user.setPassword(encodedPassword);
-        }
+        String password = userDTO.getPassword();
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
@@ -73,20 +71,19 @@ public class UserService implements IUserService {
     public UserResponse updatedUser(String userId, UserUpdateRequest request) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) auth.getPrincipal();
-        if(!Objects.equals(user.getId().toString(), userId)){
-            throw  new AppException(ErrorCode.UNAUTHENTICATED);
+        if (!Objects.equals(user.getId().toString(), userId)) {
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
         user.setAddress(request.getAddress());
         user.setFullName(request.getFullName());
         user.setDateOfBirth(request.getDateOfBirth());
-        if(request.getPassword() != null){
+        if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         userRepository.save(user);
 
         return userMapper.toUserResponse(user);
     }
-
     @Override
     public Page<UserResponse> getAllUsers(String keyword, PageRequest pageRequest) {
         return userRepository.getAllUsers(pageRequest, keyword).map((user) -> UserResponse.builder()
@@ -95,7 +92,6 @@ public class UserService implements IUserService {
                 .isActive(user.isActive())
                 .userID(user.getId()).build());
     }
-
     @Override
     public void banUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));

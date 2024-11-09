@@ -32,6 +32,7 @@ public class ProductService implements IProductService {
     private final ProductImageRepository productImageRepository;
     private final SizeRepository sizeRepository;
     private final ProductSizeRepository productSizeRepository;
+    private final OrderDetailRepository orderDetailRepository;
 
     @Override
     @Transactional
@@ -82,8 +83,8 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Page<ProductResponse> getAllProducts(String keyword, Long categoryId, PageRequest pageRequest) {
-        return productRepository.searchProduct(pageRequest, categoryId, keyword).map(ProductResponse::toProductResponse2);
+    public Page<ProductResponse> getAllProducts(String keyword, Long categoryId, PageRequest pageRequest,Long minPrice, Long maxPrice) {
+        return productRepository.searchProduct(categoryId, keyword,minPrice,maxPrice,pageRequest).map(ProductResponse::toProductResponse2);
     }
 
     @Override
@@ -154,6 +155,10 @@ public class ProductService implements IProductService {
     public void deleteProduct(long id) throws IOException {
         Product existsProduct = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_EXISTED));
         List<ProductImage> productImageList = productImageRepository.findByProductId(existsProduct.getId());
+        List<OrderDetail> orderDetails = orderDetailRepository.findByProductId(id);
+        if (!orderDetails.isEmpty()) {
+            orderDetailRepository.deleteAll(orderDetails);
+        }
         ImageUtil.deleteImage(existsProduct.getThumbnail());
         productRepository.delete(existsProduct);
         for (ProductImage productImage : productImageList) {

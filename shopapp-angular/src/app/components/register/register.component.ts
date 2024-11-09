@@ -9,6 +9,7 @@ import {
   FormBuilder,
   AbstractControl,
   ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { UserService } from '../../service/user.service';
 import { RegisterDTO } from '../../dtos/user/register.dto';
@@ -35,7 +36,7 @@ export class RegisterComponent {
   ) {
     this.profileForm = this.fb.group(
       {
-        phone: ['', [Validators.required, Validators.minLength(6)]],
+        phone: ['', [Validators.required, Validators.minLength(6),this.phoneNumberValidator()]],
         password: ['', [Validators.required, Validators.minLength(5)]],
         retypePassword: ['', [Validators.required, Validators.minLength(5)]],
         fullName: ['', [Validators.required]],
@@ -131,5 +132,11 @@ export class RegisterComponent {
   }
   homeNavigate() {
     this.router.navigate(['/']);
+  }
+  phoneNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const isValid = /^\d+$/.test(control.value);
+      return isValid ? null : { invalidPhoneNumber: { value: control.value } };
+    };
   }
 }

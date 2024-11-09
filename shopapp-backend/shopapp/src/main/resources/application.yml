@@ -4,15 +4,15 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/shopapp
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ''
+    username:
+    password: 
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-      dialect: org.hibernate.MySQL8Dialect
+      dialect: org.hibernate.dialect.MySQLDialect
       format_sql: true
   servlet:
     multipart:

@@ -9,13 +9,20 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 
-public interface ProductRepository  extends JpaRepository<Product, Long> {
-    boolean existsByName(String  name);
+public interface ProductRepository extends JpaRepository<Product, Long> {
+    boolean existsByName(String name);
+
     @Query("SELECT p FROM Product p WHERE " +
             "(:categoryId IS NULL OR :categoryId = 0 OR p.category.id = :categoryId) AND " +
-            "(:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword% OR p.description LIKE %:keyword%)")
-    Page<Product> searchProduct(Pageable pageable, @Param("categoryId") Long categoryId,
-                                @Param("keyword") String keyword);
+            "(:keyword IS NULL OR :keyword = '' OR p.name LIKE %:keyword% OR p.description LIKE %:keyword%) AND " +
+            "(:minPrice IS NULL OR :maxPrice IS NULL OR p.price BETWEEN :minPrice AND :maxPrice)")
+    Page<Product> searchProduct(
+            @Param("categoryId") Long categoryId,
+            @Param("keyword") String keyword,
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice,
+            Pageable pageable);
+
 
     Page<Product> findAll(Pageable pageable);
 

@@ -1,6 +1,6 @@
 export class RegisterDTO {
   fullname: string;
-  phone_number: string;
+  phone_number: number;
   address: string;
   password: string;
   date_of_birth: Date;

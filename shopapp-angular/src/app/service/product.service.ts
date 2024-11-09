@@ -23,13 +23,17 @@ export class ProductService {
     page: number,
     limit: number,
     keyword: string,
-    categoryId: number
+    categoryId: number,
+    minValue: number,
+    maxValue: number,
   ): Observable<BaseResponse<ProductResponse>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString())
       .set('keyword', keyword.toString())
-      .set('categoryId', categoryId.toString());
+      .set('categoryId', categoryId.toString())
+      .set('minPrice', minValue)
+      .set('maxPrice', maxValue);
     return this.http.get<BaseResponse<ProductResponse>>(this.apiPageProducts, { params });
   }
   getProduct(id: number): Observable<BaseResponse<ProductResponse>> {

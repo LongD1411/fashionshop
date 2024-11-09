@@ -49,7 +49,7 @@ export class AdminProductComponent implements OnInit {
     categoryId: number
   ) {
     this.productService
-      .getProducts(page, limit, keyword, categoryId)
+      .getProducts(page, limit, keyword, categoryId,0,1000000000)
       .subscribe({
         next: (respone) => {
           respone.results.forEach((products: ProductResponse) => {
