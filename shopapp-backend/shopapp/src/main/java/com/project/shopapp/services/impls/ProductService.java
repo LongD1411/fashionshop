@@ -44,7 +44,7 @@ public class ProductService implements IProductService {
 
         Set<ProductSize> productSizes = new HashSet<>();
         for (ProductSizeDTO sizeDTO : productDTO.getProductSizes()) {
-            Size size = sizeRepository.findById(sizeDTO.getSizeId()).orElseThrow(() -> new AppException(ErrorCode.SIZE_NOT_EXISTED));
+            Size size = sizeRepository.findById(sizeDTO.getSizeId()).orElseThrow(() -> new AppException(ErrorCode.UNCATEGORIZED_EXCEPTION));
             ProductSize productSize = ProductSize.builder().product(product).size(size).quantity(sizeDTO.getQuantity()).build();
             productSizes.add(productSize);
         }

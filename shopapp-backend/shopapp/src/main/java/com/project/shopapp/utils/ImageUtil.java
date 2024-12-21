@@ -31,19 +31,14 @@ public class ImageUtil {
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
-        // Đường dẫn đầy đủ đến tên file
         Path destination = Paths.get(uploadDir.toString(), uniqueFileName);
-        // Sao chép file vào thư mục đích
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFileName;
     }
 
     public static void checkImage(MultipartFile file){
-        if (file.getSize() > MAX_FILE_SIZE) { // 10MB
-            throw  new AppException(ErrorCode.IMAGE_SIZE_OVERLOAD);
-        }
         String contentType = file.getContentType();
-        if (contentType == null || !contentType.startsWith("image/")) {
+        if (contentType == null) {
            throw new AppException(ErrorCode.MISSING_FORMATTED_DATA);
         }
     }
